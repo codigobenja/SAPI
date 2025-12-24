@@ -1,1 +1,19 @@
-Una pequeña prueba para probar git colaborativo
+Draft Pull Requests en el equipo
+
+Permite compartir avances sin hacer merge
+
+Da visibilidad al trabajo en curso
+
+Evita merges accidentales en main
+
+Centraliza el feedback técnico en un solo lugar
+
+Facilita revisiones tempranas y mejora la calidad final
+
+👉 Regla:
+
+Trabajo en progreso → Draft PR
+
+Listo para integrar → Pull Request normal
+
+Es una práctica estándar en Git colaborativo y mejora la comunicación del equipo sin frenar el desarrollo.
