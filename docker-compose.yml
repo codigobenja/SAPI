@@ -1,0 +1,37 @@
+services:
+  ml-service:
+    build: ./ml-service
+    ports:
+      - "8000:8000"
+    networks:
+      - sentiment-net
+
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    environment:
+      - ML_SERVICE_BASE_URL=http://ml-service:8000
+      - SPRING_DATASOURCE_URL=jdbc:h2:mem:sentimentdb;DB_CLOSE_DELAY=-1
+      - SPRING_DATASOURCE_USERNAME=sa
+      - SPRING_DATASOURCE_DRIVER=org.h2.Driver
+      - SPRING_JPA_DIALECT=org.hibernate.dialect.H2Dialect
+      - DB_PASSWORD=
+    depends_on:
+      - ml-service
+    networks:
+      - sentiment-net
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8080
+    ports:
+      - "3000:3000"
+    networks:
+      - sentiment-net
+
+networks:
+  sentiment-net:
+    driver: bridge

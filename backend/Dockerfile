@@ -1,0 +1,13 @@
+# Build stage
+FROM gradle:8.5-jdk17 AS build
+WORKDIR /app
+COPY . .
+RUN gradle build -x test --no-daemon
+
+# Run stage
+FROM eclipse-temurin:17-jre-alpine
+WORKDIR /app
+COPY --from=build /app/build/libs/sentiment-api-*-SNAPSHOT.jar app.jar
+EXPOSE 8080
+ENV DB_PASSWORD=""
+ENTRYPOINT ["java","-jar","app.jar"]

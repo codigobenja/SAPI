@@ -1,0 +1,51 @@
+﻿Model and Vectorizer loaded successfully.
+ERROR EN PREDICCI├ôN: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:42088 - "POST /predict HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:57558 - "POST /predict HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:57558 - "POST /predict HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error
+ERROR EN PREDICCI├ôN BATCH: 'LogisticRegression' object has no attribute 'multi_class'
+INFO:     172.18.0.4:50016 - "POST /predict/batch HTTP/1.1" 500 Internal Server Error

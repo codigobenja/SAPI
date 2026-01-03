@@ -1,0 +1,12 @@
+.gradle
+build
+target
+bin
+node_modules
+.git
+.gitignore
+.dockerignore
+*.jar
+*.class
+*.war
+.env*
