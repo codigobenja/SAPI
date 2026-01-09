@@ -400,8 +400,8 @@ export default function BatchUpload({
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-blue-50">
-                                        {filteredItems.map((item, idx) => (
-                                            <tr key={idx} className="group hover:bg-blue-50/40 transition-all duration-300">
+                                        {filteredItems.map((item) => (
+                                            <tr key={item.id} className="group hover:bg-blue-50/40 transition-all duration-300">
                                                 <td className="py-7 text-xs font-black text-blue-200">{item.id.toString().padStart(2, '0')}</td>
                                                 <td className="py-7 text-sm font-medium text-slate-600 max-w-sm truncate pr-12">{item.text}</td>
                                                 <td className="py-7 text-center">

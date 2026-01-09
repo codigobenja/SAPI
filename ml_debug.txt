@@ -1,5 +1,0 @@
-﻿Model and Vectorizer loaded successfully.
-ERROR EN PREDICCI├ôN: 'LogisticRegression' object has no attribute 'multi_class'
-INFO:     172.18.0.4:46750 - "POST /predict HTTP/1.1" 500 Internal Server Error
-ERROR EN PREDICCI├ôN: 'LogisticRegression' object has no attribute 'multi_class'
-INFO:     172.18.0.4:48116 - "POST /predict HTTP/1.1" 500 Internal Server Error

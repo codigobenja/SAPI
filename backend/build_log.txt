@@ -1,0 +1,19 @@
+> Task :compileJava FAILED
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':compileJava'.
+> Could not resolve all dependencies for configuration ':detachedConfiguration1'.
+   > Cannot resolve external dependency org.springframework.boot:spring-boot-dependencies:3.2.5 because no repositories are defined.
+     Required by:
+         project :
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 1s
+1 actionable task: 1 executed
