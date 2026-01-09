@@ -26,7 +26,7 @@ services:
     build:
       context: ./frontend
       args:
-        NEXT_PUBLIC_API_URL: http://localhost:8080
+        NEXT_PUBLIC_API_URL: http://sapi-production-4993.up.railway.app:8080
     ports:
       - "3000:3000"
     networks:
