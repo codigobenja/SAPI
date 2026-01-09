@@ -1,15 +1,19 @@
-# ===== BUILD =====
-FROM gradle:8.7-jdk17 AS build
+# Usamos la versión más estable y ligera
+FROM python:3.12-slim
+
 WORKDIR /app
 
-COPY . .
-RUN gradle clean bootJar -x test
+# Primero instalamos solo las librerías necesarias (Capa de caché)
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# ===== RUNTIME =====
-FROM eclipse-temurin:17-jre
-WORKDIR /app
+# Copiamos SOLO los archivos vitales del sistema
+COPY main.py .
+COPY modelo_final.pkl .
+COPY vectorizador_final.pkl .
 
-COPY --from=build /app/build/libs/sentiment-api-0.0.1-SNAPSHOT.jar app.jar
+# Exponemos el puerto de la IA
+EXPOSE 8000
 
-EXPOSE 8080
-ENTRYPOINT ["java","-jar","app.jar"]
+# Iniciamos el servicio directamente
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
