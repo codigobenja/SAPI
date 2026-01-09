@@ -17,3 +17,12 @@ EXPOSE 8000
 
 # Iniciamos el servicio directamente
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+# ===== RUNTIME =====
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+
+COPY --from=build /app/build/libs/sentiment-api-0.0.1-SNAPSHOT.jar app.jar
+
+EXPOSE 8080
+ENTRYPOINT ["java","-jar","app.jar"]
