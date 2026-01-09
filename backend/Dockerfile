@@ -1,12 +1,11 @@
-FROM eclipse-temurin:17-jdk
-
+FROM gradle:8.7-jdk17 AS build
 WORKDIR /app
+COPY . .
+RUN gradle clean bootJar -x test
 
-# Copiamos el jar correcto
-COPY target/sentiment-api-0.0.1-SNAPSHOT.jar app.jar
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+COPY --from=build /app/build/libs/sentiment-api-0.0.1-SNAPSHOT.jar app.jar
 
-# Railway expone el puerto dinámico
 EXPOSE 8080
-
-# ARRANQUE CORRECTO
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
