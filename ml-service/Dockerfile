@@ -3,14 +3,18 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Primero instalamos solo las librerías necesarias (Capa de caché)
+# Instalamos dependencias (Capa de caché)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiamos SOLO los archivos vitales del sistema
+# Creamos la estructura de directorios necesaria
+RUN mkdir -p models
+
+# Copiamos el código de la API
 COPY main.py .
-COPY modelo_final.pkl .
-COPY vectorizador_final.pkl .
+
+# Copiamos el directorio de modelos (contiene el Pipeline R5K_v2.pkl)
+COPY models/ ./models/
 
 # Exponemos el puerto de la IA
 EXPOSE 8000

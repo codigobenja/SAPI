@@ -1,26 +1,64 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  --card: #ffffff;
+  --sidebar: #ffffff;
+  --border: #e2e8f0;
+  --accent: #2563eb;
+  --header: #ffffff;
+  --muted: #64748b;
+  --sidebar-active: #2563eb;
 }
 
-@theme inline {
+[data-theme='dark'] {
+  --background: #24283b;
+  --foreground: #c0caf5;
+  --card: #1a1b26;
+  --sidebar: #16161e;
+  --border: #414868;
+  --accent: #7aa2f7;
+  --header: #1a1b26;
+  --muted: #a9b1d6;
+  --sidebar-active: #7aa2f7;
+}
+
+@theme {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-sidebar: var(--sidebar);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-header: var(--header);
+  --color-muted: var(--muted);
+  --color-sidebar-active: var(--sidebar-active);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom scrollbar for Tokyo Night */
+[data-theme='dark'] ::-webkit-scrollbar {
+  width: 10px;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-track {
+  background: #1a1b26;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: #414868;
+  border-radius: 5px;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+  background: #565f89;
 }

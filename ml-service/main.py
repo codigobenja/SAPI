@@ -4,26 +4,32 @@ from pydantic import BaseModel
 import joblib
 import os
 
-MODEL_VERSION = "v1.0.0"
+# Versión semántica sugerida para la segunda modificación mayor (Pipeline)
+MODEL_VERSION = "v1.0.2"
 
 app = FastAPI(title="Sentiment API", version=MODEL_VERSION)
 
-MODEL_PATH = "modelo_final.pkl"
-VECT_PATH = "vectorizador_final.pkl"
+# Configuración dinámica del modelo
+MODEL_NAME = os.getenv("MODEL_NAME", "R5K_v2.pkl")
+MODEL_PATH = os.path.join("models", MODEL_NAME)
 
-# Global variables for model and vectorizer
-model = None
-vectorizer = None
+# Variable global para el pipeline unificado (Vectorizador + Modelo)
+pipeline = None
 
 @app.on_event("startup")
 async def load_model():
-    global model, vectorizer
-    if not os.path.exists(MODEL_PATH) or not os.path.exists(VECT_PATH):
-        raise RuntimeError("Model files not found!")
+    global pipeline
+    if not os.path.exists(MODEL_PATH):
+        # Fallback para desarrollo local si no está en la carpeta /models
+        local_path = MODEL_NAME 
+        if not os.path.exists(local_path):
+            raise RuntimeError(f"Model file {MODEL_NAME} not found in /models or root!")
+        path_to_load = local_path
+    else:
+        path_to_load = MODEL_PATH
     
-    model = joblib.load(MODEL_PATH)
-    vectorizer = joblib.load(VECT_PATH)
-    print("Model and Vectorizer loaded successfully.")
+    pipeline = joblib.load(path_to_load)
+    print(f"Pipeline {MODEL_NAME} loaded successfully. Version: {MODEL_VERSION}")
 
 class SentimentRequest(BaseModel):
     text: str
@@ -44,15 +50,13 @@ async def predict_sentiment_batch(request: BatchSentimentRequest):
     if not request.texts:
         raise HTTPException(status_code=400, detail="List of texts cannot be empty")
     
-    if model is None or vectorizer is None:
-        raise HTTPException(status_code=500, detail="Model not initialized")
+    if pipeline is None:
+        raise HTTPException(status_code=500, detail="Pipeline not initialized")
 
     try:
-        # Vectorizar todos los textos a la vez (Mucho más rápido que uno por uno)
-        vec = vectorizer.transform(request.texts)
-        
-        # Obtener todas las probabilidades
-        probs = model.predict_proba(vec)
+        # Al ser un Pipeline, enviamos los textos crudos directamente
+        # predict_proba se encarga de vectorizar y predecir en un solo paso
+        probs = pipeline.predict_proba(request.texts)
         
         results = []
         for i, prob in enumerate(probs):
@@ -78,15 +82,12 @@ async def predict_sentiment(request: SentimentRequest):
     if not request.text.strip():
         raise HTTPException(status_code=400, detail="Text cannot be empty")
     
-    if model is None or vectorizer is None:
-        raise HTTPException(status_code=500, detail="Model not initialized")
+    if pipeline is None:
+        raise HTTPException(status_code=500, detail="Pipeline not initialized")
 
     try:
-        # Preprocess and vectorize
-        vec = vectorizer.transform([request.text])
-        
-        # Predict
-        probs = model.predict_proba(vec)[0]
+        # Inferencia directa usando el Pipeline
+        probs = pipeline.predict_proba([request.text])[0]
         prob_pos = float(probs[1])
         
         prediction_label = "Positivo" if prob_pos > 0.5 else "Negativo"
@@ -105,4 +106,9 @@ async def predict_sentiment(request: SentimentRequest):
 
 @app.get("/health")
 async def health_check():
-    return {"status": "ok", "model_loaded": model is not None}
+    return {
+        "status": "ok", 
+        "model_loaded": pipeline is not None,
+        "model_version": MODEL_VERSION,
+        "model_file": MODEL_NAME
+    }
