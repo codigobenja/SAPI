@@ -1,0 +1,9 @@
+Beta_modelo_final.ipynb / Union de varios .csv para la creación de modelo predictivo, para el reentrenamiento mediante nuevas bases de datos.
+
+modelo_con_autoaprendizaje_binario.ipynb / Modelo original de Felipe, con la modificación de funcionar con un modelo-robot de predicción en lugar de una base de datos.
+Además incorporpora R5K_v2.pkl que es la 2da versión mejorada del robot predictivo.
+
+R5K_v1.pkl / Primera versión del modelo-robot de predicción
+
+R5K_v2.pkl / Segunda versión optimizada del modelo-robot de predicción
+
