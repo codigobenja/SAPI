@@ -54,6 +54,9 @@ export default function BatchUpload({
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
 
+    const [rowsPerPage, setRowsPerPage] = useState(25);
+    const [currentPage, setCurrentPage] = useState(1);
+
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             setFile(e.target.files[0]);
@@ -66,6 +69,7 @@ export default function BatchUpload({
         setSummary(null);
         setSessionItems([]);
         setFilter('Todos');
+        setCurrentPage(1);
     };
 
     const handleUpload = async () => {
@@ -124,7 +128,7 @@ export default function BatchUpload({
                             sentiment: result.prevision,
                             probability: result.probabilidad,
                             timestamp: processingTimestamp,
-                            mlVersion: result.modelVersion || 'v1.0.0'
+                            mlVersion: result.modelVersion || 'v1.0.3'
                         });
                         completed++;
                     });
@@ -187,6 +191,10 @@ export default function BatchUpload({
         ? sessionItems
         : sessionItems.filter(item => item.sentiment === filter);
 
+    // Pagination logic
+    const totalPages = Math.ceil(filteredItems.length / rowsPerPage);
+    const paginatedItems = filteredItems.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
+
     return (
         <div className="w-full h-full flex flex-col gap-8 items-center">
             <AnimatePresence mode="wait">
@@ -196,7 +204,7 @@ export default function BatchUpload({
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.95 }}
-                        className="bg-card p-12 rounded-[2.5rem] border border-border shadow-xl shadow-accent/5 flex flex-col items-center justify-center flex-1 w-full max-w-5xl transition-colors duration-300 mx-auto"
+                        className="bg-card p-12 rounded-[2.5rem] border border-border shadow-xl shadow-accent/5 flex flex-col items-center justify-center flex-1 w-full max-w-5xl mx-auto"
                         onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
                         onDragLeave={() => setIsDragging(false)}
                         onDrop={(e) => {
@@ -288,75 +296,77 @@ export default function BatchUpload({
                         className="space-y-10 pb-10 w-full"
                     >
                         {/* Summary Header */}
-                        <div className="bg-card p-4 md:p-12 rounded-[2rem] md:rounded-[3.5rem] border border-border shadow-xl shadow-accent/5 flex flex-col gap-10 w-full transition-colors duration-300">
-                            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-                                <div className="space-y-4">
-                                    <div className="inline-flex items-center gap-2 px-5 py-2 bg-accent/10 text-accent rounded-full text-xs font-black uppercase tracking-widest border border-accent/20">
-                                        <CheckCircle size={14} /> {t.batch.completed}
-                                    </div>
-                                    <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight leading-[1.1]">{t.batch.results_title}</h2>
-                                    <p className="text-muted font-medium leading-relaxed max-w-2xl">{t.batch.results_desc} <b className="text-accent">{summary.fileName}</b>.</p>
-                                </div>
-                                <div className="flex gap-4">
-                                    <button
-                                        onClick={downloadExcel}
-                                        className="bg-card text-muted hover:text-accent hover:border-accent px-6 py-4 rounded-xl transition-all font-bold text-sm border border-border active:scale-95 whitespace-nowrap flex items-center gap-2"
-                                    >
-                                        <Download size={18} /> {t.batch.download}
-                                    </button>
-                                    <button
-                                        onClick={() => { setFile(null); resetState(); }}
-                                        className="flex items-center gap-2 bg-foreground text-background hover:opacity-90 px-6 py-4 rounded-xl transition-all font-bold text-sm shadow-xl shadow-accent/5 active:scale-95 whitespace-nowrap"
-                                    >
-                                        <RotateCcw size={18} /> {t.batch.restart}
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div className="flex flex-col lg:flex-row gap-10 items-center justify-between border-t border-border pt-10">
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full">
-                                    <div className="bg-accent/5 p-10 rounded-[2.5rem] border border-accent/10 flex flex-col justify-center">
-                                        <MessageSquare className="text-accent mb-6" size={28} />
-                                        <p className="text-4xl font-black text-foreground tracking-tighter">{summary.total}</p>
-                                        <p className="text-[10px] font-extrabold text-accent uppercase tracking-widest mt-2">{t.batch.records_processed}</p>
-                                    </div>
-                                    <div className="bg-card p-10 rounded-[2.5rem] border border-border shadow-sm border-b-8 border-b-accent flex flex-col justify-center">
-                                        <CheckCircle className="text-green-500 mb-6" size={28} />
-                                        <div className="flex items-baseline gap-2">
-                                            <p className="text-4xl font-black text-foreground tracking-tighter">{summary.positive}</p>
-                                            <span className="text-sm font-bold text-accent">({((summary.positive / summary.total) * 100).toFixed(0)}%)</span>
+                        <div className="max-w-5xl mx-auto w-full">
+                            <div className="bg-card p-4 md:p-12 rounded-[2rem] md:rounded-[3.5rem] border border-border shadow-xl shadow-accent/5 flex flex-col gap-10">
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                                    <div className="space-y-4">
+                                        <div className="inline-flex items-center gap-2 px-5 py-2 bg-accent/10 text-accent rounded-full text-xs font-black uppercase tracking-widest border border-accent/20">
+                                            <CheckCircle size={14} /> {t.batch.completed}
                                         </div>
-                                        <p className="text-[10px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.favorable}</p>
+                                        <h2 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight leading-[1.1]">{t.batch.results_title}</h2>
+                                        <p className="text-muted font-medium leading-relaxed max-w-2xl">{t.batch.results_desc} <b className="text-accent">{summary.fileName}</b>.</p>
                                     </div>
-                                    <div className="bg-card p-10 rounded-[2.5rem] border border-border shadow-sm border-b-8 border-b-red-500 flex flex-col justify-center">
-                                        <AlertCircle className="text-red-500 mb-6" size={28} />
-                                        <div className="flex items-baseline gap-2">
-                                            <p className="text-4xl font-black text-red-500 tracking-tighter">{summary.negative}</p>
-                                            <span className="text-sm font-bold text-red-400">({((summary.negative / summary.total) * 100).toFixed(0)}%)</span>
-                                        </div>
-                                        <p className="text-[10px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.improvement}</p>
+                                    <div className="flex gap-4">
+                                        <button
+                                            onClick={downloadExcel}
+                                            className="bg-card text-muted hover:text-accent hover:border-accent px-6 py-4 rounded-xl transition-all font-bold text-sm border border-border active:scale-95 whitespace-nowrap flex items-center gap-2"
+                                        >
+                                            <Download size={18} /> {t.batch.download}
+                                        </button>
+                                        <button
+                                            onClick={() => { setFile(null); resetState(); }}
+                                            className="flex items-center gap-2 bg-foreground text-background hover:opacity-90 px-6 py-4 rounded-xl transition-all font-bold text-sm shadow-xl shadow-accent/5 active:scale-95 whitespace-nowrap"
+                                        >
+                                            <RotateCcw size={18} /> {t.batch.restart}
+                                        </button>
                                     </div>
                                 </div>
 
-                                <div className="w-64 h-64 relative flex-shrink-0 bg-card rounded-full p-6 shadow-inner ring-1 ring-border">
-                                    <ResponsiveContainer width="100%" height="100%">
-                                        <PieChart>
-                                            <Pie data={chartData} cx="50%" cy="50%" innerRadius={75} outerRadius={95} paddingAngle={6} dataKey="value">
-                                                {chartData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} strokeWidth={0} />)}
-                                            </Pie>
-                                            <Tooltip />
-                                        </PieChart>
-                                    </ResponsiveContainer>
-                                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                        <span className="text-3xl font-black text-foreground">{summary.total > 0 ? ((summary.positive / summary.total) * 100).toFixed(0) : 0}%</span>
-                                        <span className="text-[10px] font-black text-accent uppercase tracking-widest">{t.form.positive.toUpperCase()}</span>
+                                <div className="flex flex-col lg:flex-row gap-10 items-center justify-between border-t border-border pt-10">
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full">
+                                        <div className="bg-accent/5 p-10 rounded-[2.5rem] border border-accent/10 flex flex-col justify-center">
+                                            <MessageSquare className="text-accent mb-6" size={28} />
+                                            <p className="text-4xl font-black text-foreground tracking-tighter">{summary.total}</p>
+                                            <p className="text-[10px] font-extrabold text-accent uppercase tracking-widest mt-2">{t.batch.records_processed}</p>
+                                        </div>
+                                        <div className="bg-card p-10 rounded-[2.5rem] border border-border shadow-sm border-b-8 border-b-accent flex flex-col justify-center">
+                                            <CheckCircle className="text-green-500 mb-6" size={28} />
+                                            <div className="flex items-baseline gap-2">
+                                                <p className="text-4xl font-black text-foreground tracking-tighter">{summary.positive}</p>
+                                                <span className="text-sm font-bold text-accent">({((summary.positive / summary.total) * 100).toFixed(0)}%)</span>
+                                            </div>
+                                            <p className="text-[10px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.favorable}</p>
+                                        </div>
+                                        <div className="bg-card p-10 rounded-[2.5rem] border border-border shadow-sm border-b-8 border-b-red-500 flex flex-col justify-center">
+                                            <AlertCircle className="text-red-500 mb-6" size={28} />
+                                            <div className="flex items-baseline gap-2">
+                                                <p className="text-4xl font-black text-red-500 tracking-tighter">{summary.negative}</p>
+                                                <span className="text-sm font-bold text-red-400">({((summary.negative / summary.total) * 100).toFixed(0)}%)</span>
+                                            </div>
+                                            <p className="text-[10px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.improvement}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="w-64 h-64 relative flex-shrink-0 bg-card rounded-full p-6 shadow-inner ring-1 ring-border">
+                                        <ResponsiveContainer width="100%" height="100%">
+                                            <PieChart>
+                                                <Pie data={chartData} cx="50%" cy="50%" innerRadius={75} outerRadius={95} paddingAngle={6} dataKey="value">
+                                                    {chartData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} strokeWidth={0} />)}
+                                                </Pie>
+                                                <Tooltip />
+                                            </PieChart>
+                                        </ResponsiveContainer>
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                            <span className="text-3xl font-black text-foreground">{summary.total > 0 ? ((summary.positive / summary.total) * 100).toFixed(0) : 0}%</span>
+                                            <span className="text-[10px] font-black text-accent uppercase tracking-widest">{t.form.positive.toUpperCase()}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         {/* Detailed Table (Local Session) - Spacious Design */}
-                        <div className="bg-card p-4 md:p-12 rounded-[2rem] md:rounded-[3.5rem] border border-border shadow-xl shadow-accent/5 overflow-hidden w-full transition-colors duration-300">
+                        <div className="bg-card p-4 md:p-12 rounded-[2rem] md:rounded-[3.5rem] border border-border shadow-xl shadow-accent/5 overflow-hidden w-full">
                             <div className="flex flex-col md:flex-row items-center justify-between mb-10 pb-6 border-b border-border gap-6">
                                 <h3 className="text-2xl font-bold text-foreground flex items-center gap-4">
                                     <BarChart3 className="text-accent" size={28} />
@@ -368,7 +378,7 @@ export default function BatchUpload({
                                     <div className="relative">
                                         <button
                                             onClick={() => setIsFilterOpen(!isFilterOpen)}
-                                            className="flex items-center gap-2 bg-card px-4 py-2.5 rounded-xl border border-border text-sm font-bold text-muted hover:bg-slate-100 dark:hover:bg-slate-800 transition-all min-w-[180px] justify-between"
+                                            className="flex items-center gap-2 bg-background px-4 py-2.5 rounded-xl border border-border text-sm font-bold text-muted hover:bg-accent/5 transition-all min-w-[180px] justify-between"
                                         >
                                             <div className="flex items-center gap-2">
                                                 <Filter size={14} className="text-accent" />
@@ -410,52 +420,97 @@ export default function BatchUpload({
                                 </div>
                             </div>
 
-                            <div className="overflow-x-auto">
+                            <div className="overflow-x-auto rounded-[2rem] border border-border bg-background/50 backdrop-blur-sm">
                                 <table className="w-full text-left">
                                     <thead>
-                                        <tr>
-                                            <th className="pb-8 font-black text-[11px] uppercase tracking-[0.25em] text-muted opacity-30">{t.batch.table.hash}</th>
-                                            <th className="pb-8 font-black text-[11px] uppercase tracking-[0.25em] text-muted opacity-30">{t.batch.table.text}</th>
-                                            <th className="pb-8 font-black text-[11px] uppercase tracking-[0.25em] text-muted opacity-50 text-center">{t.batch.table.ia_class}</th>
-                                            <th className="pb-8 font-black text-[11px] uppercase tracking-[0.25em] text-muted opacity-30 text-center">{t.batch.table.confidence}</th>
-                                            <th className="pb-8 font-black text-[11px] uppercase tracking-[0.25em] text-muted opacity-30 text-center">{t.batch.table.datetime}</th>
-                                            <th className="pb-8 font-black text-[11px] uppercase tracking-[0.25em] text-muted opacity-30 text-right">{t.batch.table.version}</th>
+                                        <tr className="bg-accent/5">
+                                            <th className="px-6 py-6 font-black text-[11px] uppercase tracking-[0.25em] text-foreground/70 border-b border-border">{t.batch.table.hash}</th>
+                                            <th className="px-6 py-6 font-black text-[11px] uppercase tracking-[0.25em] text-foreground/70 border-b border-border">{t.batch.table.text}</th>
+                                            <th className="px-6 py-6 font-black text-[11px] uppercase tracking-[0.25em] text-foreground/70 border-b border-border text-center">{t.batch.table.ia_class}</th>
+                                            <th className="px-6 py-6 font-black text-[11px] uppercase tracking-[0.25em] text-foreground/70 border-b border-border text-center">{t.batch.table.confidence}</th>
+                                            <th className="px-6 py-6 font-black text-[11px] uppercase tracking-[0.25em] text-foreground/70 border-b border-border text-center">{t.batch.table.datetime}</th>
+                                            <th className="px-6 py-6 font-black text-[11px] uppercase tracking-[0.25em] text-foreground/70 border-b border-border text-right">{t.batch.table.version}</th>
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-border">
-                                        {filteredItems.map((item) => (
-                                            <tr key={item.id} className="group hover:bg-accent/5 transition-all duration-300">
-                                                <td className="py-7 text-xs font-black text-accent/30">{item.id.toString().padStart(2, '0')}</td>
-                                                <td className="py-7 text-sm font-medium text-foreground opacity-80 max-w-sm truncate pr-12 group-hover:opacity-100">{item.text}</td>
-                                                <td className="py-7 text-center">
-                                                    <span className={`inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-black tracking-tight shadow-sm border ${item.sentiment === 'Positivo'
+                                        {paginatedItems.map((item, idx) => (
+                                            <motion.tr
+                                                initial={{ opacity: 0 }}
+                                                animate={{ opacity: 1 }}
+                                                transition={{ delay: idx * 0.01 }}
+                                                key={item.id}
+                                                className="hover:bg-accent/5 group"
+                                            >
+                                                <td className="px-6 py-5 text-xs font-black text-accent/40">{item.id.toString().padStart(2, '0')}</td>
+                                                <td className="px-6 py-5 text-sm font-medium text-foreground opacity-90 max-w-sm truncate group-hover:opacity-100">{item.text}</td>
+                                                <td className="px-6 py-5 text-center">
+                                                    <span className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-xl text-[10px] font-black tracking-tight shadow-sm border ${item.sentiment === 'Positivo'
                                                         ? 'bg-green-500/10 text-green-500 border-green-500/20'
                                                         : 'bg-red-500/10 text-red-500 border-red-500/20'
                                                         }`}>
                                                         {item.sentiment === 'Positivo' ? `😊 ${t.form.positive}` : `😡 ${t.form.negative}`}
                                                     </span>
                                                 </td>
-                                                <td className="py-7 text-center">
-                                                    <span className="text-sm font-black text-muted opacity-40">{(item.probability * 100).toFixed(1)}%</span>
+                                                <td className="px-6 py-5 text-center">
+                                                    <span className="text-xs font-black text-foreground/40">{(item.probability * 100).toFixed(1)}%</span>
                                                 </td>
-                                                <td className="py-7 text-center">
-                                                    <span className="text-[10px] font-bold text-foreground opacity-60 whitespace-nowrap block">
+                                                <td className="px-6 py-5 text-center">
+                                                    <span className="text-[10px] font-bold text-foreground opacity-70 whitespace-nowrap block">
                                                         {new Date(item.timestamp).toLocaleDateString()}
                                                     </span>
                                                     <span className="text-[8px] font-bold text-muted">
                                                         {new Date(item.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                     </span>
                                                 </td>
-                                                <td className="py-7 text-right">
-                                                    <span className="text-[10px] font-black px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-muted">
+                                                <td className="px-6 py-5 text-right">
+                                                    <span className="text-[9px] font-black px-3 py-1 bg-accent/5 rounded-lg text-muted">
                                                         {item.mlVersion}
                                                     </span>
                                                 </td>
-                                            </tr>
+                                            </motion.tr>
                                         ))}
                                     </tbody>
                                 </table>
                             </div>
+
+                            {totalPages > 1 && (
+                                <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-6 border-t border-border pt-8">
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-xs font-bold text-muted uppercase tracking-widest">{t.batch.table.rows_per_page || 'Filas por página'}:</span>
+                                        <select
+                                            value={rowsPerPage}
+                                            onChange={(e) => setRowsPerPage(Number(e.target.value))}
+                                            className="bg-background border border-border rounded-lg px-3 py-1.5 text-xs font-bold text-foreground outline-none focus:border-accent"
+                                        >
+                                            {[10, 25, 50, 100].map(n => (
+                                                <option key={n} value={n}>{n}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="flex items-center gap-2">
+                                        <button
+                                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                            disabled={currentPage === 1}
+                                            className="p-2 border border-border rounded-xl hover:bg-accent/5 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+                                        >
+                                            <ChevronDown size={18} className="rotate-90" />
+                                        </button>
+                                        <div className="flex items-center gap-1 px-4">
+                                            <span className="text-sm font-black text-accent">{currentPage}</span>
+                                            <span className="text-sm font-bold text-muted">/</span>
+                                            <span className="text-sm font-bold text-muted">{totalPages}</span>
+                                        </div>
+                                        <button
+                                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                            disabled={currentPage === totalPages}
+                                            className="p-2 border border-border rounded-xl hover:bg-accent/5 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+                                        >
+                                            <ChevronDown size={18} className="-rotate-90" />
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </motion.div>
                 )}

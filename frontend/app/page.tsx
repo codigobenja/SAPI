@@ -82,9 +82,9 @@ export default function Home() {
   );
 
   return (
-    <main className="flex h-screen w-full bg-background text-foreground font-sans tracking-tight overflow-hidden relative transition-colors duration-300">
+    <main className="flex h-screen w-full bg-background text-foreground font-sans tracking-tight overflow-hidden relative">
       {/* Sidebar Azul Profesional (Desktop) */}
-      <aside className="w-72 bg-sidebar border-r border-border hidden md:flex flex-col pt-10 shadow-sm transition-colors duration-300">
+      <aside className="w-72 bg-sidebar border-r border-border hidden md:flex flex-col pt-10 shadow-sm">
         <SidebarContent />
       </aside>
 
@@ -104,7 +104,7 @@ export default function Home() {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 bottom-0 w-80 bg-sidebar z-50 flex flex-col pt-10 shadow-2xl md:hidden transition-colors duration-300"
+              className="fixed left-0 top-0 bottom-0 w-80 bg-sidebar z-50 flex flex-col pt-10 shadow-2xl md:hidden"
             >
               <div className="absolute right-4 top-4">
                 <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-muted hover:bg-card rounded-full">
@@ -128,7 +128,7 @@ export default function Home() {
       </AnimatePresence>
 
       {/* Contenido Principal */}
-      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden transition-colors duration-300">
+      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         <header className="h-20 bg-header border-b border-border px-4 md:px-10 flex items-center justify-between flex-shrink-0 z-30">
           <div className="flex items-center gap-3">
             <button
@@ -149,7 +149,7 @@ export default function Home() {
 
             <div className="hidden lg:flex items-center gap-2 bg-accent/5 px-4 py-2 rounded-full border border-accent/20">
               <span className="w-2 h-2 bg-green-500 rounded-full shadow-sm" />
-              <span className="text-[10px] font-bold text-accent uppercase tracking-widest">{t.header.model_label}: v1.0.2</span>
+              <span className="text-[10px] font-bold text-accent uppercase tracking-widest">{t.header.model_label}: v1.0.3</span>
             </div>
 
             <a href="https://github.com" target="_blank" className="bg-card p-2 md:p-2.5 rounded-full text-muted hover:text-accent hover:opacity-80 transition-all border border-border shrink-0">
@@ -159,7 +159,7 @@ export default function Home() {
         </header>
 
         <section className="flex-1 overflow-y-auto p-4 md:p-10 lg:p-14 scroll-smooth bg-background">
-          <div className="max-w-5xl mx-auto flex flex-col gap-6">
+          <div className="max-w-[1600px] w-full mx-auto flex flex-col gap-6 px-4">
             {activeTab === 'individual' && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}

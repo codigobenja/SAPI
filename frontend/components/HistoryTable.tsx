@@ -23,6 +23,9 @@ export default function HistoryTable({ refreshTrigger, mode = 'full' }: { refres
     const [filter, setFilter] = useState<'Todos' | 'Positivo' | 'Negativo'>('Todos');
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
+    const [rowsPerPage, setRowsPerPage] = useState(25);
+    const [currentPage, setCurrentPage] = useState(1);
+
     const fetchHistory = async () => {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080'}/history`);
@@ -41,6 +44,10 @@ export default function HistoryTable({ refreshTrigger, mode = 'full' }: { refres
         fetchHistory();
     }, [refreshTrigger]);
 
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filter, rowsPerPage]);
+
     const total = history.length;
     const positives = history.filter(h => h.sentiment === 'Positivo').length;
     const negatives = history.filter(h => h.sentiment === 'Negativo').length;
@@ -53,6 +60,12 @@ export default function HistoryTable({ refreshTrigger, mode = 'full' }: { refres
     const filteredItems = filter === 'Todos'
         ? history
         : history.filter(item => item.sentiment === filter);
+
+    // Pagination logic
+    const totalPages = Math.ceil(filteredItems.length / rowsPerPage);
+    const paginatedItems = mode === 'compact'
+        ? filteredItems.slice(0, 8)
+        : filteredItems.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
     const downloadExcel = () => {
         if (history.length === 0) return;
@@ -81,63 +94,64 @@ export default function HistoryTable({ refreshTrigger, mode = 'full' }: { refres
     return (
         <div className="space-y-10 w-full animate-in fade-in duration-700">
             {mode === 'full' && history.length > 0 && (
-                <div className="bg-card p-12 rounded-[3.5rem] border border-border shadow-xl shadow-accent/5 flex flex-col lg:flex-row gap-10 items-center w-full transition-colors duration-300">
-                    <div className="flex flex-col md:flex-row gap-8 items-center justify-between">
-                        <div className="flex flex-col md:flex-row gap-6 flex-1 w-full">
-                            <div className="bg-accent/5 p-10 rounded-[2.5rem] border border-accent/10 flex flex-col justify-center min-w-[200px]">
-                                <MessageSquare className="text-accent mb-6" size={28} />
-                                <p className="text-4xl font-black text-foreground tracking-tighter">{history.length}</p>
-                                <p className="text-[10px] font-extrabold text-accent uppercase tracking-widest mt-2">{t.history.total_records}</p>
-                            </div>
-                            <div className="bg-card p-10 rounded-[2.5rem] border border-border shadow-sm border-b-8 border-b-accent flex flex-col justify-center min-w-[200px]">
-                                <CheckCircle className="text-green-500 mb-6" size={28} />
-                                <div className="flex items-baseline gap-2">
-                                    <p className="text-4xl font-black text-foreground tracking-tighter">{positives}</p>
-                                    <span className="text-sm font-bold text-accent">({((positives / (total || 1)) * 100).toFixed(0)}%)</span>
+                <div className="max-w-5xl mx-auto w-full">
+                    <div className="bg-card p-12 rounded-[3.5rem] border border-border shadow-xl shadow-accent/5 flex flex-col lg:flex-row gap-10 items-center">
+                        <div className="flex flex-col md:flex-row gap-8 items-center justify-between">
+                            <div className="flex flex-col md:flex-row gap-6 flex-1 w-full">
+                                <div className="bg-accent/5 p-10 rounded-[2.5rem] border border-accent/10 flex flex-col justify-center min-w-[200px]">
+                                    <MessageSquare className="text-accent mb-6" size={28} />
+                                    <p className="text-4xl font-black text-foreground tracking-tighter">{history.length}</p>
+                                    <p className="text-[10px] font-extrabold text-accent uppercase tracking-widest mt-2">{t.history.total_records}</p>
                                 </div>
-                                <p className="text-[10px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.favorable}</p>
-                            </div>
-                            <div className="bg-card p-10 rounded-[2.5rem] border border-border shadow-sm border-b-8 border-b-red-500 flex flex-col justify-center min-w-[200px]">
-                                <AlertCircle className="text-red-500 mb-6" size={28} />
-                                <div className="flex items-baseline gap-2">
-                                    <p className="text-4xl font-black text-red-500 tracking-tighter">{negatives}</p>
-                                    <span className="text-sm font-bold text-red-400">({((negatives / (total || 1)) * 100).toFixed(0)}%)</span>
+                                <div className="bg-card p-10 rounded-[2.5rem] border border-border shadow-sm border-b-8 border-b-accent flex flex-col justify-center min-w-[200px]">
+                                    <CheckCircle className="text-green-500 mb-6" size={28} />
+                                    <div className="flex items-baseline gap-2">
+                                        <p className="text-4xl font-black text-foreground tracking-tighter">{positives}</p>
+                                        <span className="text-sm font-bold text-accent">({((positives / (total || 1)) * 100).toFixed(0)}%)</span>
+                                    </div>
+                                    <p className="text-[10px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.favorable}</p>
                                 </div>
-                                <p className="text-[10px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.improvement}</p>
+                                <div className="bg-card p-10 rounded-[2.5rem] border border-border shadow-sm border-b-8 border-b-red-500 flex flex-col justify-center min-w-[200px]">
+                                    <AlertCircle className="text-red-500 mb-6" size={28} />
+                                    <div className="flex items-baseline gap-2">
+                                        <p className="text-4xl font-black text-red-500 tracking-tighter">{negatives}</p>
+                                        <span className="text-sm font-bold text-red-400">({((negatives / (total || 1)) * 100).toFixed(0)}%)</span>
+                                    </div>
+                                    <p className="text-[10px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.improvement}</p>
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="w-64 h-64 relative flex-shrink-0 bg-card rounded-full p-6 shadow-inner ring-1 ring-border">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <PieChart>
-                                    <Pie
-                                        data={chartData}
-                                        cx="50%"
-                                        cy="50%"
-                                        innerRadius={75}
-                                        outerRadius={95}
-                                        paddingAngle={6}
-                                        dataKey="value"
-                                    >
-                                        {chartData.map((entry, index) => (
-                                            <Cell key={`cell-${index}`} fill={entry.color} strokeWidth={0} />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip />
-                                </PieChart>
-                            </ResponsiveContainer>
-                            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                                <span className="text-3xl font-black text-foreground">
-                                    {total > 0 ? ((positives / total) * 100).toFixed(0) : 0}%
-                                </span>
-                                <span className="text-[10px] font-black text-accent uppercase tracking-widest">{t.form.positive}</span>
+                            <div className="w-64 h-64 relative flex-shrink-0 bg-card rounded-full p-6 shadow-inner ring-1 ring-border">
+                                <ResponsiveContainer width="100%" height="100%">
+                                    <PieChart>
+                                        <Pie
+                                            data={chartData}
+                                            cx="50%"
+                                            cy="50%"
+                                            innerRadius={75}
+                                            outerRadius={95}
+                                            paddingAngle={6}
+                                            dataKey="value"
+                                        >
+                                            {chartData.map((entry, index) => (
+                                                <Cell key={`cell-${index}`} fill={entry.color} strokeWidth={0} />
+                                            ))}
+                                        </Pie>
+                                        <Tooltip />
+                                    </PieChart>
+                                </ResponsiveContainer>
+                                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                                    <span className="text-3xl font-black text-foreground">
+                                        {total > 0 ? ((positives / total) * 100).toFixed(0) : 0}%
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             )}
 
-            <div className={`bg-card p-4 md:p-12 rounded-[2rem] md:rounded-[3.5rem] border border-border shadow-xl shadow-accent/5 overflow-hidden w-full transition-colors duration-300 ${mode === 'compact' ? 'max-h-[500px]' : ''}`}>
+            <div className={`bg-card p-4 md:p-12 rounded-[2rem] md:rounded-[3.5rem] border border-border shadow-xl shadow-accent/5 overflow-hidden w-full ${mode === 'compact' ? 'max-h-[500px]' : ''}`}>
                 <div className="flex flex-col md:flex-row items-center justify-between mb-10 pb-6 border-b border-border gap-6">
                     <h3 className="text-2xl font-bold text-foreground flex items-center gap-4">
                         <History className="text-accent" size={28} />
@@ -155,7 +169,7 @@ export default function HistoryTable({ refreshTrigger, mode = 'full' }: { refres
                         <div className="relative">
                             <button
                                 onClick={() => setIsFilterOpen(!isFilterOpen)}
-                                className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/40 px-4 py-2.5 rounded-xl border border-border text-sm font-bold text-muted hover:bg-slate-100 dark:hover:bg-slate-800 transition-all min-w-[150px] justify-between"
+                                className="flex items-center gap-2 bg-background px-4 py-2.5 rounded-xl border border-border text-sm font-bold text-muted hover:bg-accent/5 transition-all min-w-[150px] justify-between"
                             >
                                 <div className="flex items-center gap-2">
                                     <Filter size={14} className="text-accent" />
@@ -196,20 +210,20 @@ export default function HistoryTable({ refreshTrigger, mode = 'full' }: { refres
                     </div>
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="overflow-x-auto rounded-[2rem] border border-border bg-background/50 backdrop-blur-sm">
                     <table className="w-full text-left">
                         <thead>
-                            <tr>
-                                <th className="pb-8 font-black text-[11px] uppercase tracking-[0.25em] text-muted opacity-30">{t.batch.table.hash}</th>
-                                <th className="pb-8 font-black text-[11px] uppercase tracking-[0.25em] text-muted opacity-30">{t.batch.table.text}</th>
-                                <th className="pb-8 font-black text-[11px] uppercase tracking-[0.25em] text-muted opacity-50 text-center">{t.batch.table.ia_class}</th>
-                                <th className="pb-8 font-black text-[11px] uppercase tracking-[0.25em] text-muted opacity-30 text-center">{t.batch.table.confidence}</th>
-                                <th className="pb-8 font-black text-[11px] uppercase tracking-[0.25em] text-muted opacity-30 text-center">{t.batch.table.datetime}</th>
-                                <th className="pb-8 font-black text-[11px] uppercase tracking-[0.25em] text-muted opacity-30 text-right">{t.batch.table.version}</th>
+                            <tr className="bg-accent/5">
+                                <th className="px-6 py-6 font-black text-[11px] uppercase tracking-[0.25em] text-foreground/70 border-b border-border">{t.batch.table.hash}</th>
+                                <th className="px-6 py-6 font-black text-[11px] uppercase tracking-[0.25em] text-foreground/70 border-b border-border">{t.batch.table.text}</th>
+                                <th className="px-6 py-6 font-black text-[11px] uppercase tracking-[0.25em] text-foreground/70 border-b border-border text-center">{t.batch.table.ia_class}</th>
+                                <th className="px-6 py-6 font-black text-[11px] uppercase tracking-[0.25em] text-foreground/70 border-b border-border text-center">{t.batch.table.confidence}</th>
+                                <th className="px-6 py-6 font-black text-[11px] uppercase tracking-[0.25em] text-foreground/70 border-b border-border text-center">{t.batch.table.datetime}</th>
+                                <th className="px-6 py-6 font-black text-[11px] uppercase tracking-[0.25em] text-foreground/70 border-b border-border text-right">{t.batch.table.version}</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-border">
-                            {filteredItems.length === 0 ? (
+                            {paginatedItems.length === 0 ? (
                                 <tr>
                                     <td colSpan={6} className="py-24 text-center">
                                         <div className="flex flex-col items-center gap-4 opacity-20 text-muted">
@@ -219,33 +233,33 @@ export default function HistoryTable({ refreshTrigger, mode = 'full' }: { refres
                                     </td>
                                 </tr>
                             ) : (
-                                (mode === 'compact' ? filteredItems.slice(0, 8) : filteredItems).map((item, idx) => (
+                                paginatedItems.map((item, idx) => (
                                     <motion.tr
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
-                                        transition={{ delay: idx * 0.03 }}
+                                        transition={{ delay: idx * 0.01 }}
                                         key={item.id}
-                                        className="hover:bg-accent/5 transition-all duration-300 group"
+                                        className="hover:bg-accent/5 group"
                                     >
-                                        <td className="py-7 text-xs font-black text-accent/30">{((idx + 1) + (refreshTrigger * 0)).toString().padStart(2, '0')}</td>
-                                        <td className="py-7 text-sm font-medium text-foreground opacity-80 max-w-sm truncate pr-10 group-hover:opacity-100" title={item.text}>
+                                        <td className="px-6 py-5 text-xs font-black text-accent/40">{((idx + 1) + ((currentPage - 1) * rowsPerPage)).toString().padStart(2, '0')}</td>
+                                        <td className="px-6 py-5 text-sm font-medium text-foreground opacity-90 max-w-sm truncate group-hover:opacity-100" title={item.text}>
                                             {item.text}
                                         </td>
-                                        <td className="py-7 text-center">
-                                            <span className={`inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-xs font-black tracking-tight shadow-sm border ${item.sentiment === 'Positivo'
+                                        <td className="px-6 py-5 text-center">
+                                            <span className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-xl text-[10px] font-black tracking-tight shadow-sm border ${item.sentiment === 'Positivo'
                                                 ? 'bg-green-500/10 text-green-500 border-green-500/20'
                                                 : 'bg-red-500/10 text-red-500 border-red-500/20'
                                                 }`}>
                                                 {item.sentiment === 'Positivo' ? `😊 ${t.form.positive}` : `😡 ${t.form.negative}`}
                                             </span>
                                         </td>
-                                        <td className="py-7 text-center">
-                                            <span className="text-sm font-black text-muted opacity-40">
+                                        <td className="px-6 py-5 text-center">
+                                            <span className="text-xs font-black text-foreground/40">
                                                 {(item.probability * 100).toFixed(1)}%
                                             </span>
                                         </td>
-                                        <td className="py-7 text-center">
-                                            <div className="flex flex-col items-center opacity-60">
+                                        <td className="px-6 py-5 text-center">
+                                            <div className="flex flex-col items-center opacity-70">
                                                 <span className="text-[10px] font-bold text-foreground whitespace-nowrap">
                                                     {new Date(item.createdAt).toLocaleDateString()}
                                                 </span>
@@ -254,8 +268,8 @@ export default function HistoryTable({ refreshTrigger, mode = 'full' }: { refres
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="py-7 text-right">
-                                            <span className="text-[10px] font-black px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-lg text-muted">
+                                        <td className="px-6 py-5 text-right">
+                                            <span className="text-[9px] font-black px-3 py-1 bg-accent/5 rounded-lg text-muted">
                                                 {item.modelVersion}
                                             </span>
                                         </td>
@@ -265,6 +279,45 @@ export default function HistoryTable({ refreshTrigger, mode = 'full' }: { refres
                         </tbody>
                     </table>
                 </div>
+
+                {mode === 'full' && totalPages > 1 && (
+                    <div className="mt-8 flex flex-col md:flex-row items-center justify-between gap-6 border-t border-border pt-8">
+                        <div className="flex items-center gap-3">
+                            <span className="text-xs font-bold text-muted uppercase tracking-widest">{t.batch.table.rows_per_page || 'Filas por página'}:</span>
+                            <select
+                                value={rowsPerPage}
+                                onChange={(e) => setRowsPerPage(Number(e.target.value))}
+                                className="bg-background border border-border rounded-lg px-3 py-1.5 text-xs font-bold text-foreground outline-none focus:border-accent"
+                            >
+                                {[10, 25, 50, 100].map(n => (
+                                    <option key={n} value={n}>{n}</option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <button
+                                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                disabled={currentPage === 1}
+                                className="p-2 border border-border rounded-xl hover:bg-accent/5 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+                            >
+                                <ChevronDown size={18} className="rotate-90" />
+                            </button>
+                            <div className="flex items-center gap-1 px-4">
+                                <span className="text-sm font-black text-accent">{currentPage}</span>
+                                <span className="text-sm font-bold text-muted">/</span>
+                                <span className="text-sm font-bold text-muted">{totalPages}</span>
+                            </div>
+                            <button
+                                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                disabled={currentPage === totalPages}
+                                className="p-2 border border-border rounded-xl hover:bg-accent/5 disabled:opacity-30 disabled:hover:bg-transparent transition-all"
+                            >
+                                <ChevronDown size={18} className="-rotate-90" />
+                            </button>
+                        </div>
+                    </div>
+                )}
 
                 {mode === 'compact' && filteredItems.length > 8 && (
                     <div className="p-6 bg-accent/5 text-center border-t border-border">

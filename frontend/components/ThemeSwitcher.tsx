@@ -38,7 +38,7 @@ export default function ThemeSwitcher() {
         <div className="relative" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center justify-center w-10 h-10 bg-card hover:bg-slate-100 dark:hover:bg-slate-800 border border-border rounded-full text-foreground transition-all active:scale-95"
+                className="flex items-center justify-center w-10 h-10 bg-card hover:bg-accent/5 border border-border rounded-full text-foreground active:scale-95"
             >
                 {currentTheme.icon}
             </button>
@@ -58,9 +58,9 @@ export default function ThemeSwitcher() {
                                     setTheme(t.id);
                                     setIsOpen(false);
                                 }}
-                                className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm transition-all ${theme === t.id
+                                className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm ${theme === t.id
                                     ? 'bg-accent text-white font-bold'
-                                    : 'text-muted hover:bg-blue-50/50 dark:hover:bg-blue-900/20 hover:text-accent font-medium'
+                                    : 'text-muted hover:bg-accent/5 hover:text-accent font-medium'
                                     }`}
                             >
                                 <div className="flex items-center gap-3">

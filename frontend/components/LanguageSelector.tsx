@@ -37,7 +37,7 @@ export default function LanguageSelector() {
         <div className="relative" ref={dropdownRef}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center gap-2 px-3 py-1.5 bg-card hover:opacity-90 border border-border rounded-xl text-sm font-bold text-foreground transition-all active:scale-95"
+                className="flex items-center gap-2 px-3 py-1.5 bg-card hover:bg-accent/5 border border-border rounded-xl text-sm font-bold text-foreground active:scale-95"
             >
                 <span className="text-lg">{selectedLang.flag}</span>
                 <span className="hidden sm:inline">{selectedLang.name}</span>
@@ -59,7 +59,7 @@ export default function LanguageSelector() {
                                     setLanguage(lang.code as any);
                                     setIsOpen(false);
                                 }}
-                                className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm transition-all ${selectedLang.code === lang.code
+                                className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm ${selectedLang.code === lang.code
                                     ? 'bg-accent text-white font-bold'
                                     : 'text-muted hover:bg-accent/5 hover:text-accent font-medium'
                                     }`}

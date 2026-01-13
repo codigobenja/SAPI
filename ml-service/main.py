@@ -4,13 +4,13 @@ from pydantic import BaseModel
 import joblib
 import os
 
-# Versión semántica sugerida para la segunda modificación mayor (Pipeline)
-MODEL_VERSION = "v1.0.2"
+# Versión del modelo
+MODEL_VERSION = "v1.0.3"
 
 app = FastAPI(title="Sentiment API", version=MODEL_VERSION)
 
 # Configuración dinámica del modelo
-MODEL_NAME = os.getenv("MODEL_NAME", "R5K_v2.pkl")
+MODEL_NAME = os.getenv("MODEL_NAME", "R5K_v3.pkl")
 MODEL_PATH = os.path.join("models", MODEL_NAME)
 
 # Variable global para el pipeline unificado (Vectorizador + Modelo)

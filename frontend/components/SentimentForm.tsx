@@ -44,7 +44,7 @@ export default function SentimentForm({
     };
 
     return (
-        <div className={`w-full transition-all duration-700 ${result ? 'max-w-6xl' : 'max-w-3xl'} mx-auto`}>
+        <div className={`w-full ${result ? 'max-w-6xl' : 'max-w-3xl'} mx-auto`}>
             {/* Header section */}
             <AnimatePresence>
                 {!result && (
@@ -68,12 +68,12 @@ export default function SentimentForm({
                 )}
             </AnimatePresence>
 
-            <div className={`grid grid-cols-1 ${result ? 'lg:grid-cols-2 lg:gap-8' : 'grid-cols-1'} transition-all duration-700 items-stretch`}>
+            <div className={`grid grid-cols-1 ${result ? 'lg:grid-cols-2 lg:gap-8' : ''} items-stretch`}>
 
                 {/* Form Section */}
                 <motion.div
                     layout
-                    className="bg-card p-8 rounded-[2.5rem] border border-border shadow-xl shadow-accent/5 h-full flex flex-col justify-between transition-colors duration-300"
+                    className="bg-card p-8 rounded-[2.5rem] border border-border shadow-xl shadow-accent/5 h-full flex flex-col justify-between"
                 >
                     <div className="space-y-6">
                         {result && (
@@ -88,7 +88,7 @@ export default function SentimentForm({
                                     value={text}
                                     onChange={(e) => setText(e.target.value)}
                                     placeholder={t.form.placeholder}
-                                    className={`w-full ${result ? 'h-52' : 'h-44'} p-6 bg-accent/5 focus:bg-card border-2 border-transparent rounded-[2rem] focus:border-accent transition-all outline-none resize-none text-lg text-foreground placeholder:text-muted/50 font-medium`}
+                                    className={`w-full ${result ? 'h-52' : 'h-44'} p-6 bg-accent/5 focus:bg-card border-2 border-transparent rounded-[2rem] focus:border-accent outline-none resize-none text-lg text-foreground placeholder:text-muted/50 font-medium`}
                                     required
                                 />
                                 <div className="absolute bottom-6 right-6 text-[10px] text-muted font-bold uppercase tracking-widest bg-card/50 px-3 py-1 rounded-full backdrop-blur-sm border border-border">
