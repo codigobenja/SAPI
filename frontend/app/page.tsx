@@ -149,7 +149,7 @@ export default function Home() {
 
             <div className="hidden lg:flex items-center gap-2 bg-accent/5 px-4 py-2 rounded-full border border-accent/20">
               <span className="w-2 h-2 bg-green-500 rounded-full shadow-sm" />
-              <span className="text-[10px] font-bold text-accent uppercase tracking-widest">{t.header.model_label}: v1.0.3</span>
+              <span className="text-[10px] font-bold text-accent uppercase tracking-widest">{t.header.model_label}: v3.0.1</span>
             </div>
 
             <a href="https://github.com" target="_blank" className="bg-card p-2 md:p-2.5 rounded-full text-muted hover:text-accent hover:opacity-80 transition-all border border-border shrink-0">

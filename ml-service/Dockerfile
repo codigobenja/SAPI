@@ -13,7 +13,7 @@ RUN mkdir -p models
 # Copiamos el código de la API
 COPY main.py .
 
-# Copiamos el directorio de modelos (contiene el Pipeline R5K_v2.pkl)
+# Copiamos el directorio de modelos (contiene el Pipeline pkl de la ultima versión)
 COPY models/ ./models/
 
 # Exponemos el puerto de la IA

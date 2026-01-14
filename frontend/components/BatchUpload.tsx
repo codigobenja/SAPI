@@ -131,7 +131,7 @@ export default function BatchUpload({
                             sentiment: result.prevision,
                             probability: result.probabilidad,
                             timestamp: processingTimestamp,
-                            mlVersion: result.modelVersion || 'v1.0.3'
+                            mlVersion: result.modelVersion || 'v3.0.1'
                         });
                         completed++;
                     });
