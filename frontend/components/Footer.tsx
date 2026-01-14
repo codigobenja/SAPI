@@ -3,6 +3,12 @@
 import { Github, Linkedin, Cpu, Code2, Terminal, Globe } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+interface TeamMember {
+  name: string;
+  github: string;
+  linkedin: string;
+}
+
 const teamMembers = [
   { name: "Adrián Acevedo", github: "https://github.com/SiriusBK1", linkedin: "#" },
   { name: "Felipe Muñoz", github: "https://github.com/FelipeMunoz01", linkedin: "#" },
@@ -69,4 +75,5 @@ export default function Footer() {
       </div>
     </footer>
   );
+
 }
