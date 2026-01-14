@@ -1,23 +1,27 @@
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from contextlib import asynccontextmanager
 import joblib
 import os
 
 # Versión del modelo
-MODEL_VERSION = "v1.0.3"
-
-app = FastAPI(title="Sentiment API", version=MODEL_VERSION)
+MODEL_VERSION = "v3.0.1"
 
 # Configuración dinámica del modelo
 MODEL_NAME = os.getenv("MODEL_NAME", "R5K_v3.pkl")
 MODEL_PATH = os.path.join("models", MODEL_NAME)
 
+# Constantes para la lógica de Neutro (del sentiment_wrapper)
+LOW_THRESHOLD = 0.4
+HIGH_THRESHOLD = 0.6
+
 # Variable global para el pipeline unificado (Vectorizador + Modelo)
 pipeline = None
 
-@app.on_event("startup")
-async def load_model():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
     global pipeline
     if not os.path.exists(MODEL_PATH):
         # Fallback para desarrollo local si no está en la carpeta /models
@@ -30,6 +34,10 @@ async def load_model():
     
     pipeline = joblib.load(path_to_load)
     print(f"Pipeline {MODEL_NAME} loaded successfully. Version: {MODEL_VERSION}")
+    yield
+    # Shutdown (si es necesario)
+
+app = FastAPI(title="Sentiment API", version=MODEL_VERSION, lifespan=lifespan)
 
 class SentimentRequest(BaseModel):
     text: str
@@ -45,6 +53,16 @@ class BatchSentimentRequest(BaseModel):
 class BatchSentimentResponse(BaseModel):
     results: list[SentimentResponse]
 
+def get_sentiment_label(prob_pos: float):
+    """Implementa la lógica del sentiment_wrapper.py"""
+    if LOW_THRESHOLD < prob_pos < HIGH_THRESHOLD:
+        return "Neutro"
+    return "Positivo" if prob_pos >= HIGH_THRESHOLD else "Negativo"
+
+def calculate_confidence(prob_pos: float):
+    prob_neg = 1.0 - prob_pos
+    return round(max(prob_pos, prob_neg), 4)
+
 @app.post("/predict/batch", response_model=BatchSentimentResponse)
 async def predict_sentiment_batch(request: BatchSentimentRequest):
     if not request.texts:
@@ -54,19 +72,18 @@ async def predict_sentiment_batch(request: BatchSentimentRequest):
         raise HTTPException(status_code=500, detail="Pipeline not initialized")
 
     try:
-        # Al ser un Pipeline, enviamos los textos crudos directamente
-        # predict_proba se encarga de vectorizar y predecir en un solo paso
+        # Inferencia por lotes
         probs = pipeline.predict_proba(request.texts)
         
         results = []
         for i, prob in enumerate(probs):
             prob_pos = float(prob[1])
-            prediction_label = "Positivo" if prob_pos > 0.5 else "Negativo"
-            probability_score = prob_pos if prob_pos > 0.5 else (1 - prob_pos)
+            prediction_label = get_sentiment_label(prob_pos)
+            confidence = calculate_confidence(prob_pos)
             
             results.append(SentimentResponse(
                 prevision=prediction_label,
-                probabilidad=round(probability_score, 4),
+                probabilidad=confidence,
                 model_version=MODEL_VERSION
             ))
 
@@ -86,16 +103,16 @@ async def predict_sentiment(request: SentimentRequest):
         raise HTTPException(status_code=500, detail="Pipeline not initialized")
 
     try:
-        # Inferencia directa usando el Pipeline
+        # Inferencia directa
         probs = pipeline.predict_proba([request.text])[0]
         prob_pos = float(probs[1])
         
-        prediction_label = "Positivo" if prob_pos > 0.5 else "Negativo"
-        probability_score = prob_pos if prob_pos > 0.5 else (1 - prob_pos)
+        prediction_label = get_sentiment_label(prob_pos)
+        confidence = calculate_confidence(prob_pos)
 
         return SentimentResponse(
             prevision=prediction_label,
-            probabilidad=round(probability_score, 4),
+            probabilidad=confidence,
             model_version=MODEL_VERSION
         )
     except Exception as e:

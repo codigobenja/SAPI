@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { History, Clock, MessageSquare, CheckCircle, AlertCircle, Download, Filter, BarChart3, ChevronDown } from 'lucide-react';
+import { History, Clock, MessageSquare, CheckCircle, AlertCircle, Download, Filter, BarChart3, ChevronDown, RotateCcw } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
@@ -20,7 +20,7 @@ export default function HistoryTable({ refreshTrigger, mode = 'full' }: { refres
     const { t } = useLanguage();
     const [history, setHistory] = useState<HistoryItem[]>([]);
     const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState<'Todos' | 'Positivo' | 'Negativo'>('Todos');
+    const [filter, setFilter] = useState<'Todos' | 'Positivo' | 'Neutro' | 'Negativo'>('Todos');
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -50,11 +50,13 @@ export default function HistoryTable({ refreshTrigger, mode = 'full' }: { refres
 
     const total = history.length;
     const positives = history.filter(h => h.sentiment === 'Positivo').length;
+    const neutrals = history.filter(h => h.sentiment === 'Neutro').length;
     const negatives = history.filter(h => h.sentiment === 'Negativo').length;
 
     const chartData = [
-        { name: 'Positivos', value: positives, color: '#3b82f6' },
-        { name: 'Negativos', value: negatives, color: '#f43f5e' },
+        { name: t.history.filter.pos, value: positives, color: '#22c55e' }, // emerald-500
+        { name: t.history.filter.neu, value: neutrals, color: '#f59e0b' },  // amber-500
+        { name: t.history.filter.neg, value: negatives, color: '#ef4444' }, // red-500
     ];
 
     const filteredItems = filter === 'Todos'
@@ -97,27 +99,35 @@ export default function HistoryTable({ refreshTrigger, mode = 'full' }: { refres
                 <div className="max-w-5xl mx-auto w-full">
                     <div className="bg-card p-12 rounded-[3.5rem] border border-border shadow-xl shadow-accent/5 flex flex-col lg:flex-row gap-10 items-center">
                         <div className="flex flex-col md:flex-row gap-8 items-center justify-between">
-                            <div className="flex flex-col md:flex-row gap-6 flex-1 w-full">
-                                <div className="bg-accent/5 p-10 rounded-[2.5rem] border border-accent/10 flex flex-col justify-center min-w-[200px]">
-                                    <MessageSquare className="text-accent mb-6" size={28} />
-                                    <p className="text-4xl font-black text-foreground tracking-tighter">{history.length}</p>
-                                    <p className="text-[10px] font-extrabold text-accent uppercase tracking-widest mt-2">{t.history.total_records}</p>
+                            <div className="flex flex-col md:flex-row gap-4 flex-1 w-full">
+                                <div className="bg-accent/5 p-6 rounded-[2rem] border border-accent/10 flex flex-col justify-center min-w-[140px]">
+                                    <MessageSquare className="text-accent mb-4" size={24} />
+                                    <p className="text-3xl font-black text-foreground tracking-tighter">{history.length}</p>
+                                    <p className="text-[9px] font-extrabold text-accent uppercase tracking-widest mt-2">{t.history.total_records}</p>
                                 </div>
-                                <div className="bg-card p-10 rounded-[2.5rem] border border-border shadow-sm border-b-8 border-b-accent flex flex-col justify-center min-w-[200px]">
-                                    <CheckCircle className="text-green-500 mb-6" size={28} />
-                                    <div className="flex items-baseline gap-2">
-                                        <p className="text-4xl font-black text-foreground tracking-tighter">{positives}</p>
-                                        <span className="text-sm font-bold text-accent">({((positives / (total || 1)) * 100).toFixed(0)}%)</span>
+                                <div className="bg-card p-6 rounded-[2rem] border border-border shadow-sm border-b-4 border-b-emerald-500 flex flex-col justify-center min-w-[140px]">
+                                    <CheckCircle className="text-green-500 mb-4" size={24} />
+                                    <div className="flex items-baseline gap-1.5">
+                                        <p className="text-3xl font-black text-foreground tracking-tighter">{positives}</p>
+                                        <span className="text-xs font-bold text-accent">({((positives / (total || 1)) * 100).toFixed(0)}%)</span>
                                     </div>
-                                    <p className="text-[10px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.favorable}</p>
+                                    <p className="text-[9px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.favorable}</p>
                                 </div>
-                                <div className="bg-card p-10 rounded-[2.5rem] border border-border shadow-sm border-b-8 border-b-red-500 flex flex-col justify-center min-w-[200px]">
-                                    <AlertCircle className="text-red-500 mb-6" size={28} />
-                                    <div className="flex items-baseline gap-2">
-                                        <p className="text-4xl font-black text-red-500 tracking-tighter">{negatives}</p>
-                                        <span className="text-sm font-bold text-red-400">({((negatives / (total || 1)) * 100).toFixed(0)}%)</span>
+                                <div className="bg-card p-6 rounded-[2rem] border border-border shadow-sm border-b-4 border-b-amber-500 flex flex-col justify-center min-w-[140px]">
+                                    <RotateCcw className="text-amber-500 mb-4" size={24} />
+                                    <div className="flex items-baseline gap-1.5">
+                                        <p className="text-3xl font-black text-amber-500 tracking-tighter">{neutrals}</p>
+                                        <span className="text-xs font-bold text-amber-400">({((neutrals / (total || 1)) * 100).toFixed(0)}%)</span>
                                     </div>
-                                    <p className="text-[10px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.improvement}</p>
+                                    <p className="text-[9px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.neutral}</p>
+                                </div>
+                                <div className="bg-card p-6 rounded-[2rem] border border-border shadow-sm border-b-4 border-b-red-500 flex flex-col justify-center min-w-[140px]">
+                                    <AlertCircle className="text-red-500 mb-4" size={24} />
+                                    <div className="flex items-baseline gap-1.5">
+                                        <p className="text-3xl font-black text-red-500 tracking-tighter">{negatives}</p>
+                                        <span className="text-xs font-bold text-red-400">({((negatives / (total || 1)) * 100).toFixed(0)}%)</span>
+                                    </div>
+                                    <p className="text-[9px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.improvement}</p>
                                 </div>
                             </div>
 
@@ -173,7 +183,7 @@ export default function HistoryTable({ refreshTrigger, mode = 'full' }: { refres
                             >
                                 <div className="flex items-center gap-2">
                                     <Filter size={14} className="text-accent" />
-                                    <span>{filter === 'Todos' ? t.history.filter.all : filter === 'Positivo' ? t.history.filter.pos : t.history.filter.neg}</span>
+                                    <span>{filter === 'Todos' ? t.history.filter.all : filter === 'Positivo' ? t.history.filter.pos : filter === 'Neutro' ? t.history.filter.neu : t.history.filter.neg}</span>
                                 </div>
                                 <ChevronDown size={16} className={`text-muted transition-transform ${isFilterOpen ? 'rotate-180' : ''}`} />
                             </button>
@@ -189,6 +199,7 @@ export default function HistoryTable({ refreshTrigger, mode = 'full' }: { refres
                                         {[
                                             { id: 'Todos', label: t.history.filter.all, icon: '🔍' },
                                             { id: 'Positivo', label: t.history.filter.pos, icon: '😊' },
+                                            { id: 'Neutro', label: t.history.filter.neu, icon: '😐' },
                                             { id: 'Negativo', label: t.history.filter.neg, icon: '😡' }
                                         ].map((opt) => (
                                             <button
@@ -248,9 +259,11 @@ export default function HistoryTable({ refreshTrigger, mode = 'full' }: { refres
                                         <td className="px-6 py-5 text-center">
                                             <span className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-xl text-[10px] font-black tracking-tight shadow-sm border ${item.sentiment === 'Positivo'
                                                 ? 'bg-green-500/10 text-green-500 border-green-500/20'
-                                                : 'bg-red-500/10 text-red-500 border-red-500/20'
+                                                : item.sentiment === 'Neutro'
+                                                    ? 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                                                    : 'bg-red-500/10 text-red-500 border-red-500/20'
                                                 }`}>
-                                                {item.sentiment === 'Positivo' ? `😊 ${t.form.positive}` : `😡 ${t.form.negative}`}
+                                                {item.sentiment === 'Positivo' ? `😊 ${t.form.positive}` : item.sentiment === 'Neutro' ? `😐 ${t.form.neutral}` : `😡 ${t.form.negative}`}
                                             </span>
                                         </td>
                                         <td className="px-6 py-5 text-center">

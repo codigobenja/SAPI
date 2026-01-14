@@ -33,6 +33,7 @@ export const translations = {
             conclusion: 'Conclusión del Sistema',
             confidence: 'Confianza',
             positive: 'Positivo',
+            neutral: 'Neutro',
             negative: 'Negativo',
             clear: 'LIMPIAR Y REINICIAR ANÁLISIS',
             error_conn: 'Error de conexión con el servidor.',
@@ -55,10 +56,12 @@ export const translations = {
             restart: 'Nuevo Análisis',
             records_processed: 'Registros Procesados',
             favorable: 'Opiniones Favorables',
+            neutral: 'Neutrales',
             improvement: 'Puntos de Mejora',
             detail_title: 'Detalle del Lote Analizado',
             filter_all: 'Todos',
             filter_pos: 'Solo Positivos',
+            filter_neu: 'Solo Neutros',
             filter_neg: 'Solo Negativos',
             table: {
                 hash: '#',
@@ -82,6 +85,7 @@ export const translations = {
             filter: {
                 all: 'Todos',
                 pos: 'Positivos',
+                neu: 'Neutros',
                 neg: 'Negativos',
             }
         },
@@ -123,6 +127,7 @@ export const translations = {
             conclusion: 'Conclusão do Sistema',
             confidence: 'Confiança',
             positive: 'Positivo',
+            neutral: 'Neutro',
             negative: 'Negativo',
             clear: 'LIMPIAR E REINICIAR ANÁLISE',
             error_conn: 'Erro de conexão com o servidor.',
@@ -145,10 +150,12 @@ export const translations = {
             restart: 'Nova Análise',
             records_processed: 'Registros Processados',
             favorable: 'Opiniões Favoráveis',
+            neutral: 'Neutras',
             improvement: 'Pontos de Melhoria',
             detail_title: 'Detalhe do Lote Analisado',
             filter_all: 'Todos',
             filter_pos: 'Apenas Positivos',
+            filter_neu: 'Apenas Neutros',
             filter_neg: 'Apenas Negativos',
             table: {
                 hash: '#',
@@ -172,6 +179,7 @@ export const translations = {
             filter: {
                 all: 'Todos',
                 pos: 'Positivos',
+                neu: 'Neutros',
                 neg: 'Negativos',
             }
         },

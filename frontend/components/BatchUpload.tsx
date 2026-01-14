@@ -20,6 +20,7 @@ interface SessionItem {
 interface BatchSummary {
     total: number;
     positive: number;
+    neutral: number;
     negative: number;
     duration: number;
     fileName: string;
@@ -50,7 +51,7 @@ export default function BatchUpload({
 }: BatchUploadProps) {
     const { t } = useLanguage();
     const [uploading, setUploading] = useState(false);
-    const [filter, setFilter] = useState<'Todos' | 'Positivo' | 'Negativo'>('Todos');
+    const [filter, setFilter] = useState<'Todos' | 'Positivo' | 'Neutro' | 'Negativo'>('Todos');
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [isDragging, setIsDragging] = useState(false);
 
@@ -103,6 +104,7 @@ export default function BatchUpload({
             const total = lines.length;
             let completed = 0;
             let positiveCount = 0;
+            let neutralCount = 0;
             let negativeCount = 0;
             const newSessionItems: SessionItem[] = [];
             const processingTimestamp = new Date().toISOString();
@@ -120,6 +122,7 @@ export default function BatchUpload({
                     results.forEach((result, index) => {
                         const cleanLine = chunk[index];
                         if (result.prevision === 'Positivo') positiveCount++;
+                        else if (result.prevision === 'Neutro') neutralCount++;
                         else negativeCount++;
 
                         newSessionItems.unshift({
@@ -149,6 +152,7 @@ export default function BatchUpload({
                 setSummary({
                     total,
                     positive: positiveCount,
+                    neutral: neutralCount,
                     negative: negativeCount,
                     duration,
                     fileName: file.name
@@ -183,8 +187,9 @@ export default function BatchUpload({
     };
 
     const chartData = summary ? [
-        { name: t.history.filter.pos, value: summary.positive, color: '#3b82f6' },
-        { name: t.history.filter.neg, value: summary.negative, color: '#f43f5e' },
+        { name: t.history.filter.pos, value: summary.positive, color: '#22c55e' }, // emerald-500
+        { name: t.history.filter.neu, value: summary.neutral, color: '#f59e0b' }, // amber-500
+        { name: t.history.filter.neg, value: summary.negative, color: '#ef4444' }, // red-500
     ] : [];
 
     const filteredItems = filter === 'Todos'
@@ -216,15 +221,15 @@ export default function BatchUpload({
                             }
                         }}
                     >
-                        <div className="flex flex-col items-center gap-6 mb-12">
-                            <div className="bg-accent/10 p-5 rounded-3xl text-accent">
-                                <Layers size={40} />
+                        <div className="flex items-center justify-center gap-4 mb-12">
+                            <div className="bg-accent/10 p-4 rounded-2xl text-accent">
+                                <Layers size={32} />
                             </div>
-                            <div className="text-center">
-                                <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight mb-2">
+                            <div className="text-left">
+                                <h2 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">
                                     {t.batch.title}
                                 </h2>
-                                <p className="text-muted text-sm md:text-base font-medium max-w-md mx-auto">
+                                <p className="text-muted text-sm md:text-base font-medium">
                                     {t.batch.desc}
                                 </p>
                             </div>
@@ -234,7 +239,7 @@ export default function BatchUpload({
                             {!sessionItems.length ? (
                                 <div className="w-full space-y-8">
                                     <div className="relative group w-full">
-                                        <div className={`border-4 border-dashed rounded-[3rem] p-16 transition-all duration-500 flex flex-col items-center gap-6 ${isDragging ? 'border-accent bg-accent/5 scale-[0.98]' : 'border-border hover:border-accent/40 bg-accent/5'
+                                        <div className={`border-4 border-dashed rounded-[2.5rem] p-10 transition-all duration-500 flex flex-col items-center gap-4 ${isDragging ? 'border-accent bg-accent/5 scale-[0.98]' : 'border-border hover:border-accent/40 bg-accent/5'
                                             }`}>
                                             <input
                                                 type="file"
@@ -243,11 +248,11 @@ export default function BatchUpload({
                                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                                                 disabled={uploading}
                                             />
-                                            <div className="p-8 bg-card rounded-full shadow-2xl group-hover:scale-110 transition-transform duration-500">
-                                                <Upload className={uploading ? 'animate-bounce text-accent' : 'text-accent'} size={48} />
+                                            <div className="p-6 bg-card rounded-full shadow-2xl group-hover:scale-110 transition-transform duration-500">
+                                                <Upload className={uploading ? 'animate-bounce text-accent' : 'text-accent'} size={36} />
                                             </div>
                                             <div className="text-center">
-                                                <p className="text-xl font-black text-foreground mb-1">
+                                                <p className="text-lg font-black text-foreground mb-1">
                                                     {file ? file.name : t.batch.drop_zone}
                                                 </p>
                                                 <p className="text-xs font-bold text-muted uppercase tracking-[0.3em]">
@@ -272,7 +277,7 @@ export default function BatchUpload({
                                 <div className="mt-8 space-y-4 w-full">
                                     <div className="flex justify-between items-end">
                                         <div className="text-left">
-                                            <p className="text-[9px] font-black uppercase text-accent tracking-widest">{t.batch.processing}</p>
+                                            <p className="text-base font-black uppercase text-red-500 tracking-[0.3em] animate-pulse">{t.batch.processing}</p>
                                             <p className="text-xs font-bold text-muted">{t.batch.analyzing_batch}</p>
                                         </div>
                                         <span className="text-3xl font-black text-accent">{progress}%</span>
@@ -323,27 +328,35 @@ export default function BatchUpload({
                                 </div>
 
                                 <div className="flex flex-col lg:flex-row gap-10 items-center justify-between border-t border-border pt-10">
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 w-full">
-                                        <div className="bg-accent/5 p-10 rounded-[2.5rem] border border-accent/10 flex flex-col justify-center">
-                                            <MessageSquare className="text-accent mb-6" size={28} />
-                                            <p className="text-4xl font-black text-foreground tracking-tighter">{summary.total}</p>
-                                            <p className="text-[10px] font-extrabold text-accent uppercase tracking-widest mt-2">{t.batch.records_processed}</p>
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 flex-1 w-full">
+                                        <div className="bg-accent/5 p-6 rounded-[2rem] border border-accent/10 flex flex-col justify-center">
+                                            <MessageSquare className="text-accent mb-4" size={24} />
+                                            <p className="text-3xl font-black text-foreground tracking-tighter">{summary.total}</p>
+                                            <p className="text-[9px] font-extrabold text-accent uppercase tracking-widest mt-2">{t.batch.records_processed}</p>
                                         </div>
-                                        <div className="bg-card p-10 rounded-[2.5rem] border border-border shadow-sm border-b-8 border-b-accent flex flex-col justify-center">
-                                            <CheckCircle className="text-green-500 mb-6" size={28} />
-                                            <div className="flex items-baseline gap-2">
-                                                <p className="text-4xl font-black text-foreground tracking-tighter">{summary.positive}</p>
-                                                <span className="text-sm font-bold text-accent">({((summary.positive / summary.total) * 100).toFixed(0)}%)</span>
+                                        <div className="bg-card p-6 rounded-[2rem] border border-border shadow-sm border-b-4 border-b-emerald-500 flex flex-col justify-center">
+                                            <CheckCircle className="text-green-500 mb-4" size={24} />
+                                            <div className="flex items-baseline gap-1.5">
+                                                <p className="text-3xl font-black text-foreground tracking-tighter">{summary.positive}</p>
+                                                <span className="text-xs font-bold text-accent">({((summary.positive / summary.total) * 100).toFixed(0)}%)</span>
                                             </div>
-                                            <p className="text-[10px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.favorable}</p>
+                                            <p className="text-[9px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.favorable}</p>
                                         </div>
-                                        <div className="bg-card p-10 rounded-[2.5rem] border border-border shadow-sm border-b-8 border-b-red-500 flex flex-col justify-center">
-                                            <AlertCircle className="text-red-500 mb-6" size={28} />
-                                            <div className="flex items-baseline gap-2">
-                                                <p className="text-4xl font-black text-red-500 tracking-tighter">{summary.negative}</p>
-                                                <span className="text-sm font-bold text-red-400">({((summary.negative / summary.total) * 100).toFixed(0)}%)</span>
+                                        <div className="bg-card p-6 rounded-[2rem] border border-border shadow-sm border-b-4 border-b-amber-500 flex flex-col justify-center">
+                                            <RotateCcw className="text-amber-500 mb-4" size={24} />
+                                            <div className="flex items-baseline gap-1.5">
+                                                <p className="text-3xl font-black text-amber-500 tracking-tighter">{summary.neutral}</p>
+                                                <span className="text-xs font-bold text-amber-400">({((summary.neutral / summary.total) * 100).toFixed(0)}%)</span>
                                             </div>
-                                            <p className="text-[10px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.improvement}</p>
+                                            <p className="text-[9px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.neutral}</p>
+                                        </div>
+                                        <div className="bg-card p-6 rounded-[2rem] border border-border shadow-sm border-b-4 border-b-red-500 flex flex-col justify-center">
+                                            <AlertCircle className="text-red-500 mb-4" size={24} />
+                                            <div className="flex items-baseline gap-1.5">
+                                                <p className="text-3xl font-black text-red-500 tracking-tighter">{summary.negative}</p>
+                                                <span className="text-xs font-bold text-red-400">({((summary.negative / summary.total) * 100).toFixed(0)}%)</span>
+                                            </div>
+                                            <p className="text-[9px] font-extrabold text-muted uppercase tracking-widest mt-2">{t.batch.improvement}</p>
                                         </div>
                                     </div>
 
@@ -398,6 +411,7 @@ export default function BatchUpload({
                                                     {[
                                                         { id: 'Todos', label: t.batch.filter_all, icon: '🔍' },
                                                         { id: 'Positivo', label: t.batch.filter_pos, icon: '😊' },
+                                                        { id: 'Neutro', label: t.batch.filter_neu, icon: '😐' },
                                                         { id: 'Negativo', label: t.batch.filter_neg, icon: '😡' }
                                                     ].map((opt) => (
                                                         <button
@@ -446,9 +460,11 @@ export default function BatchUpload({
                                                 <td className="px-6 py-5 text-center">
                                                     <span className={`inline-flex items-center gap-2.5 px-4 py-2 rounded-xl text-[10px] font-black tracking-tight shadow-sm border ${item.sentiment === 'Positivo'
                                                         ? 'bg-green-500/10 text-green-500 border-green-500/20'
-                                                        : 'bg-red-500/10 text-red-500 border-red-500/20'
+                                                        : item.sentiment === 'Neutro'
+                                                            ? 'bg-amber-500/10 text-amber-500 border-amber-500/20'
+                                                            : 'bg-red-500/10 text-red-500 border-red-500/20'
                                                         }`}>
-                                                        {item.sentiment === 'Positivo' ? `😊 ${t.form.positive}` : `😡 ${t.form.negative}`}
+                                                        {item.sentiment === 'Positivo' ? `😊 ${t.form.positive}` : item.sentiment === 'Neutro' ? `😐 ${t.form.neutral}` : `😡 ${t.form.negative}`}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-5 text-center">

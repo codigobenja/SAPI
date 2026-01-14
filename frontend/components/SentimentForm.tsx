@@ -136,30 +136,58 @@ export default function SentimentForm({
                         >
                             <div className={`p-10 rounded-[2.5rem] border shadow-2xl h-full flex flex-col justify-center gap-8 ${result.prevision === 'Positivo'
                                 ? 'bg-gradient-to-br from-green-500/10 to-emerald-500/5 border-green-500/20 shadow-green-500/10'
-                                : 'bg-gradient-to-br from-red-500/10 to-orange-500/5 border-red-500/20 shadow-red-500/10'
+                                : result.prevision === 'Neutro'
+                                    ? 'bg-gradient-to-br from-amber-500/10 to-yellow-500/5 border-amber-500/20 shadow-amber-500/10'
+                                    : 'bg-gradient-to-br from-red-500/10 to-orange-500/5 border-red-500/20 shadow-red-500/10'
                                 }`}>
                                 <div className="space-y-5 text-center lg:text-left">
                                     <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border border-border bg-card/50 backdrop-blur-sm shadow-sm">
-                                        <div className={`w-2 h-2 rounded-full ${result.prevision === 'Positivo' ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]' : 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]'}`} />
-                                        <span className={`text-[11px] font-black uppercase tracking-[0.2em] ${result.prevision === 'Positivo' ? 'text-green-500' : 'text-red-500'
+                                        <div className={`w-2 h-2 rounded-full ${result.prevision === 'Positivo'
+                                            ? 'bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]'
+                                            : result.prevision === 'Neutro'
+                                                ? 'bg-amber-500 shadow-[0_0_10px_rgba(245,158,11,0.5)]'
+                                                : 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]'
+                                            }`} />
+                                        <span className={`text-[11px] font-black uppercase tracking-[0.2em] ${result.prevision === 'Positivo'
+                                            ? 'text-green-500'
+                                            : result.prevision === 'Neutro'
+                                                ? 'text-amber-500'
+                                                : 'text-red-500'
                                             }`}>
                                             {t.form.conclusion}
                                         </span>
                                     </div>
 
-                                    <h3 className={`text-6xl font-black tracking-tighter ${result.prevision === 'Positivo' ? 'text-green-500' : 'text-red-500'
+                                    <h3 className={`text-6xl font-black tracking-tighter ${result.prevision === 'Positivo'
+                                        ? 'text-green-500'
+                                        : result.prevision === 'Neutro'
+                                            ? 'text-amber-500'
+                                            : 'text-red-500'
                                         }`}>
-                                        {result.prevision === 'Positivo' ? t.form.positive : t.form.negative}
+                                        {result.prevision === 'Positivo'
+                                            ? t.form.positive
+                                            : result.prevision === 'Neutro'
+                                                ? t.form.neutral
+                                                : t.form.negative}
                                     </h3>
 
                                     <div className="flex flex-col gap-2 opacity-80">
                                         <div className="flex items-center gap-2 justify-center lg:justify-start">
-                                            <Sparkles size={18} className={result.prevision === 'Positivo' ? 'text-green-500' : 'text-red-500'} />
+                                            <Sparkles size={18} className={result.prevision === 'Positivo'
+                                                ? 'text-green-500'
+                                                : result.prevision === 'Neutro'
+                                                    ? 'text-amber-500'
+                                                    : 'text-red-500'} />
                                             <span className="text-sm font-bold text-foreground opacity-70">{t.form.confidence}: {(result.probabilidad * 100).toFixed(1)}%</span>
                                         </div>
                                         <div className="w-full bg-accent/10 rounded-full h-1.5 mt-2 max-w-[200px] mx-auto lg:mx-0 overflow-hidden">
                                             <motion.div
-                                                className={`h-full rounded-full ${result.prevision === 'Positivo' ? 'bg-green-500' : 'bg-red-500'}`}
+                                                className={`h-full rounded-full ${result.prevision === 'Positivo'
+                                                    ? 'bg-green-500'
+                                                    : result.prevision === 'Neutro'
+                                                        ? 'bg-amber-500'
+                                                        : 'bg-red-500'
+                                                    }`}
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${result.probabilidad * 100}%` }}
                                             />
@@ -168,10 +196,21 @@ export default function SentimentForm({
                                 </div>
 
                                 <div className="flex justify-center items-center">
-                                    <div className={`text-9xl p-10 rounded-full bg-card shadow-2xl relative ring-[12px] group transition-all duration-700 ${result.prevision === 'Positivo' ? 'ring-green-400/10 text-green-500' : 'ring-red-400/10 text-red-500'
+                                    <div className={`text-9xl p-10 rounded-full bg-card shadow-2xl relative ring-[12px] group transition-all duration-700 ${result.prevision === 'Positivo'
+                                        ? 'ring-green-400/10 text-green-500'
+                                        : result.prevision === 'Neutro'
+                                            ? 'ring-amber-400/10 text-amber-500'
+                                            : 'ring-red-400/10 text-red-500'
                                         }`}>
-                                        <div className={`absolute inset-0 rounded-full blur-3xl opacity-20 ${result.prevision === 'Positivo' ? 'bg-green-400' : 'bg-red-400'}`} />
-                                        <span className="relative z-10 block group-hover:scale-110 transition-transform duration-500">{result.prevision === 'Positivo' ? '😊' : '😡'}</span>
+                                        <div className={`absolute inset-0 rounded-full blur-3xl opacity-20 ${result.prevision === 'Positivo'
+                                            ? 'bg-green-400'
+                                            : result.prevision === 'Neutro'
+                                                ? 'bg-amber-400'
+                                                : 'bg-red-400'
+                                            }`} />
+                                        <span className="relative z-10 block group-hover:scale-110 transition-transform duration-500">
+                                            {result.prevision === 'Positivo' ? '😊' : result.prevision === 'Neutro' ? '😐' : '😡'}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
