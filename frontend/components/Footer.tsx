@@ -11,7 +11,7 @@ interface TeamMember {
 }
 
 const teamMembers: TeamMember[] = [
-  { name: "Adrián Daniel Acevedo Vergara", github: "https://github.com/SiriusBK1", linkedin: "www.linkedin.com/in/adrian-daniel-acevedo-vergara-717790234" },
+  { name: "Adrián Daniel Acevedo Vergara", github: "https://github.com/SiriusBK1", linkedin: "https://www.linkedin.com/in/adrian-daniel-acevedo-vergara-717790234" },
   { name: "Felipe Muñoz", github: "https://github.com/FelipeMunoz01", linkedin: "https://www.linkedin.com/in/felipe-m-92123990" },
   { name: "Genrry Llamocca Huamani", github: "https://github.com/GenryTc", linkedin: "https://www.linkedin.com/in/genrry-llamocca-huamani-9743bb10b" },
   { name: "Jenner Eduardo Ospina Benavides", github: "https://github.com/jennerospina13", linkedin: "https://www.linkedin.com/in/jenner-ospina" },
@@ -88,4 +88,5 @@ export default function Footer() {
     </footer>
   );
 }
+
 
