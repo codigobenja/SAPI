@@ -11,12 +11,13 @@ interface TeamMember {
 }
 
 const teamMembers: TeamMember[] = [
-  { name: "Adrián Acevedo", github: "https://github.com/SiriusBK1", linkedin: "#" },
-  { name: "Felipe Muñoz", github: "https://github.com/FelipeMunoz01", linkedin: "#" },
-  { name: "Genrry Llamocca Huamani", github: "https://github.com/GenryTc", linkedin: "#" },
-  { name: "Jenner Eduardo Ospina Benavides", github: "https://github.com/jennerospina13", linkedin: "#" },
-  { name: "Benjamin Peña Romero", github: "https://github.com/codigobenja", linkedin: "#" },
-  { name: "Tomás Vlaeminck", github: "https://github.com/Vlaeminck", linkedin: "#" },
+  { name: "Adrián Daniel Acevedo Vergara", github: "https://github.com/SiriusBK1", linkedin: "www.linkedin.com/in/adrian-daniel-acevedo-vergara-717790234" },
+  { name: "Felipe Muñoz", github: "https://github.com/FelipeMunoz01", linkedin: "https://www.linkedin.com/in/felipe-m-92123990" },
+  { name: "Genrry Llamocca Huamani", github: "https://github.com/GenryTc", linkedin: "https://www.linkedin.com/in/genrry-llamocca-huamani-9743bb10b" },
+  { name: "Jenner Eduardo Ospina Benavides", github: "https://github.com/jennerospina13", linkedin: "https://www.linkedin.com/in/jenner-ospina" },
+  { name: "Benjamin Peña Romero", github: "https://github.com/codigobenja", linkedin: "https://www.linkedin.com/in/benjamin-pr" },
+  { name: "Tomás Vlaeminck", github: "https://github.com/Vlaeminck", linkedin: "https://www.linkedin.com/in/tomasvlaeminck" },
+  { name: "Cristina Perez", github: "#", linkedin: "https://www.linkedin.com/in/cristina-perez-mardones-471572173" },
 ];
 
 export default function Footer() {
@@ -87,3 +88,4 @@ export default function Footer() {
     </footer>
   );
 }
+
