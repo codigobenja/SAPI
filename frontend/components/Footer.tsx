@@ -1,15 +1,16 @@
 'use client';
 
-import { Github, Linkedin, Cpu, Code2, Terminal, Globe } from 'lucide-react';
+import { Github, Linkedin, Cpu, Globe } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+// 1. Interfaz simplificada (solo lo que realmente usas)
 interface TeamMember {
   name: string;
   github: string;
   linkedin: string;
 }
 
-const teamMembers = [
+const teamMembers: TeamMember[] = [
   { name: "Adrián Acevedo", github: "https://github.com/SiriusBK1", linkedin: "#" },
   { name: "Felipe Muñoz", github: "https://github.com/FelipeMunoz01", linkedin: "#" },
   { name: "Genrry Llamocca Huamani", github: "https://github.com/GenryTc", linkedin: "#" },
@@ -40,24 +41,37 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Equipo: El grid se ajusta solo (1 col móvil, 2 tablet, 3 desktop) */}
+          {/* Equipo corregido sin m.role */}
           <div className="flex-1 max-w-3xl">
             <h3 className="text-[10px] font-black text-muted uppercase tracking-[0.3em] mb-6">Development Team</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-              {teamMembers.map((m, i) => (
+              {teamMembers.map((m: TeamMember, i: number) => (
                 <motion.div
                   key={i}
                   whileHover={{ scale: 1.02 }}
-                  className="p-3 rounded-xl border border-border bg-background/50 flex flex-col gap-2 transition-colors hover:border-accent/30"
+                  className="p-4 rounded-xl border border-border bg-background/50 flex flex-col gap-3 transition-colors hover:border-accent/30"
                 >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h4 className="text-sm font-bold text-foreground leading-tight">{m.name}</h4>
-                      <p className="text-[9px] font-black text-accent uppercase tracking-tighter">{m.role}</p>
-                    </div>
-                    <div className="flex gap-2 opacity-50">
-                      <a href={m.github} className="hover:text-accent"><Github size={14}/></a>
-                      <a href={m.linkedin} className="hover:text-accent"><Linkedin size={14}/></a>
+                  <div className="flex justify-between items-center">
+                    <h4 className="text-sm font-bold text-foreground leading-tight truncate mr-2">
+                      {m.name}
+                    </h4>
+                    <div className="flex gap-2 shrink-0 opacity-50 group-hover:opacity-100 transition-opacity">
+                      <a 
+                        href={m.github} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="hover:text-accent transition-colors"
+                      >
+                        <Github size={16}/>
+                      </a>
+                      <a 
+                        href={m.linkedin} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="hover:text-accent transition-colors"
+                      >
+                        <Linkedin size={16}/>
+                      </a>
                     </div>
                   </div>
                 </motion.div>
@@ -68,12 +82,11 @@ export default function Footer() {
 
         <div className="mt-12 pt-6 border-t border-border/50 flex justify-between items-center text-[9px] font-black text-muted/60 uppercase tracking-[0.2em]">
           <span>© 2026 PROYECTO ACADÉMICO</span>
-          <span className="flex items-center gap-2 italic">
+          <span className="flex items-center gap-2 italic text-accent">
             <Globe size={12}/> v1.0.0-stable
           </span>
         </div>
       </div>
     </footer>
   );
-
 }
