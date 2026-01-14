@@ -84,6 +84,11 @@ export const translations = {
                 pos: 'Positivos',
                 neg: 'Negativos',
             }
+        },
+        footer: {
+            description: "Analizador de sentimientos de arquitectura híbrida. Procesamiento de datos distribuido entre entornos Java y Python.",
+            team: "Equipo de Desarrollo",
+            project: "PROYECTO ACADÉMICO"
         }
     },
     pt: {
@@ -119,7 +124,7 @@ export const translations = {
             confidence: 'Confiança',
             positive: 'Positivo',
             negative: 'Negativo',
-            clear: 'LIMPAR E REINICIAR ANÁLISE',
+            clear: 'LIMPIAR E REINICIAR ANÁLISE',
             error_conn: 'Erro de conexão com o servidor.',
         },
         batch: {
@@ -151,7 +156,7 @@ export const translations = {
                 ia_class: 'Classificação IA',
                 confidence: 'Confiança',
                 datetime: 'Data e Hora',
-                version: 'Versão ML',
+                version: 'Versión ML',
             }
         },
         history: {
@@ -169,6 +174,11 @@ export const translations = {
                 pos: 'Positivos',
                 neg: 'Negativos',
             }
+        },
+        footer: {
+            description: "Analisador de sentimentos de arquitetura híbrida. Processamento de dados distribuído entre ambientes Java e Python.",
+            team: "Equipe de Desenvolvimento",
+            project: "PROJETO ACADÊMICO"
         }
     }
 };
