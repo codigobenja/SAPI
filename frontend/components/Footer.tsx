@@ -29,7 +29,7 @@ export default function Footer() {
           <div className="max-w-xs space-y-4">
             <div className="flex items-center gap-2 text-accent font-black italic text-xl">
               <Cpu size={22} />
-              <span>SENTIMENT AI</span>
+              <span>SENTIMENT API</span>
             </div>
             <p className="text-muted text-xs font-medium leading-relaxed">
               Analizador de sentimientos de arquitectura híbrida.
@@ -82,11 +82,9 @@ export default function Footer() {
 
         <div className="mt-12 pt-6 border-t border-border/50 flex justify-between items-center text-[9px] font-black text-muted/60 uppercase tracking-[0.2em]">
           <span>© 2026 PROYECTO ACADÉMICO</span>
-          <span className="flex items-center gap-2 italic text-accent">
-            <Globe size={12}/> v1.0.0-stable
-          </span>
         </div>
       </div>
     </footer>
   );
 }
+
