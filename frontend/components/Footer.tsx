@@ -17,7 +17,7 @@ const teamMembers: TeamMember[] = [
   { name: "Jenner Eduardo Ospina Benavides", github: "https://github.com/jennerospina13", linkedin: "https://www.linkedin.com/in/jenner-ospina" },
   { name: "Benjamin Peña Romero", github: "https://github.com/codigobenja", linkedin: "https://www.linkedin.com/in/benjamin-pr" },
   { name: "Tomás Vlaeminck", github: "https://github.com/Vlaeminck", linkedin: "https://www.linkedin.com/in/tomasvlaeminck" },
-  { name: "Cristina Perez", github: "#", linkedin: "https://www.linkedin.com/in/cristina-perez-mardones-471572173" },
+  { name: "Cristina Perez", github: "https://github.com/25071983", linkedin: "https://www.linkedin.com/in/cristina-perez-mardones-471572173" },
 ];
 
 export default function Footer() {
@@ -88,5 +88,6 @@ export default function Footer() {
     </footer>
   );
 }
+
 
 
