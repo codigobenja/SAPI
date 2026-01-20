@@ -15,8 +15,12 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SentimentAI - Dashboard",
+  title: "SAPI - SentimentAI",
   description: "Análisis de sentimientos con Java y Python",
+  icons: {
+    icon: "/favicon.ico?v=2",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({

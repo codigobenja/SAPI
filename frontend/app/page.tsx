@@ -9,12 +9,24 @@ import LanguageSelector from '../components/LanguageSelector';
 import ThemeSwitcher from '../components/ThemeSwitcher';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../context/LanguageContext';
+import { useEffect } from 'react';
+import SplashScreen from '../components/SplashScreen';
 
 export default function Home() {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<'individual' | 'batch' | 'metrics'>('individual');
   const [refreshHistory, setRefreshHistory] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showSplash, setShowSplash] = useState(false);
+
+  useEffect(() => {
+    // Mostramos la animación en cada carga/refresco de la página
+    setShowSplash(true);
+  }, []);
+
+  const handleSplashFinish = () => {
+    setShowSplash(false);
+  };
 
   // Lifted state for BatchUpload persistence
   const [batchFile, setBatchFile] = useState<File | null>(null);
@@ -40,14 +52,13 @@ export default function Home() {
 
   const SidebarContent = () => (
     <>
-      <div className="px-8 mb-12 hidden md:block">
-        <div className="flex items-center gap-3">
-          <div className="bg-accent p-2 rounded-lg shadow-lg shadow-accent/20">
-            <Activity className="text-white" size={20} />
-          </div>
-          <h1 className="text-xl font-bold text-foreground tracking-tighter">
-            SentimentAPI
-          </h1>
+      <div className="h-20 flex items-center px-8 mb-10 border-b border-border/50">
+        <div className="flex items-center justify-center w-full">
+          <img
+            src="/banner.png"
+            alt="SAPI Logo"
+            className="w-full h-auto max-h-12 object-contain"
+          />
         </div>
       </div>
 
@@ -82,135 +93,139 @@ export default function Home() {
   );
 
   return (
-    <main className="flex h-screen w-full bg-background text-foreground font-sans tracking-tight overflow-hidden relative">
-      {/* Sidebar Azul Profesional (Desktop) */}
-      <aside className="w-72 bg-sidebar border-r border-border hidden md:flex flex-col pt-10 shadow-sm">
-        <SidebarContent />
-      </aside>
-
-      {/* Mobile Drawer */}
+    <>
       <AnimatePresence>
-        {isMobileMenuOpen && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 md:hidden"
-            />
-            <motion.aside
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed left-0 top-0 bottom-0 w-80 bg-sidebar z-50 flex flex-col pt-10 shadow-2xl md:hidden"
-            >
-              <div className="absolute right-4 top-4">
-                <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-muted hover:bg-card rounded-full">
-                  <X size={24} />
-                </button>
-              </div>
-              <div className="px-8 mb-12">
-                <div className="flex items-center gap-3">
-                  <div className="bg-accent p-2 rounded-lg shadow-lg shadow-accent/20">
-                    <Activity className="text-white" size={20} />
-                  </div>
-                  <h1 className="text-xl font-bold text-foreground tracking-tighter">
-                    SentimentAPI
-                  </h1>
-                </div>
-              </div>
-              <SidebarContent />
-            </motion.aside>
-          </>
-        )}
+        {showSplash && <SplashScreen onFinish={handleSplashFinish} />}
       </AnimatePresence>
+      <main className="flex h-screen w-full bg-background text-foreground font-sans tracking-tight overflow-hidden relative">
+        {/* Sidebar Azul Profesional (Desktop) */}
+        <aside className="w-72 bg-sidebar border-r border-border hidden md:flex flex-col shadow-sm">
+          <SidebarContent />
+        </aside>
 
-      {/* Contenido Principal */}
-      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-        <header className="h-20 bg-header border-b border-border px-4 md:px-10 flex items-center justify-between flex-shrink-0 z-30">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsMobileMenuOpen(true)}
-              className="md:hidden p-2 text-muted hover:bg-card rounded-xl transition-all"
-            >
-              <Menu size={24} />
-            </button>
-            <h2 className="text-sm md:text-lg font-bold text-foreground truncate">
-              {sidebarItems.find(i => i.id === activeTab)?.label}
-            </h2>
-            <div className="h-4 w-[1px] bg-border hidden lg:block" />
-          </div>
+        {/* Mobile Drawer */}
+        <AnimatePresence>
+          {isMobileMenuOpen && (
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 md:hidden"
+              />
+              <motion.aside
+                initial={{ x: '-100%' }}
+                animate={{ x: 0 }}
+                exit={{ x: '-100%' }}
+                transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                className="fixed left-0 top-0 bottom-0 w-80 bg-sidebar z-50 flex flex-col shadow-2xl md:hidden"
+              >
+                <div className="absolute right-4 top-4">
+                  <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 text-muted hover:bg-card rounded-full">
+                    <X size={24} />
+                  </button>
+                </div>
+                <div className="h-20 flex items-center px-8 mb-4 border-b border-border/50">
+                  <div className="flex items-center justify-center w-full">
+                    <img
+                      src="/banner.png"
+                      alt="SAPI Logo"
+                      className="w-full h-auto max-h-10 object-contain"
+                    />
+                  </div>
+                </div>
+                <SidebarContent />
+              </motion.aside>
+            </>
+          )}
+        </AnimatePresence>
 
-          <div className="flex items-center gap-2 md:gap-4">
-            <LanguageSelector />
-            <ThemeSwitcher />
-
-            <div className="hidden lg:flex items-center gap-2 bg-accent/5 px-4 py-2 rounded-full border border-accent/20">
-              <span className="w-2 h-2 bg-green-500 rounded-full shadow-sm" />
-              <span className="text-[10px] font-bold text-accent uppercase tracking-widest">{t.header.model_label}: v3.0.1</span>
+        {/* Contenido Principal */}
+        <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+          <header className="h-20 bg-header border-b border-border px-4 md:px-10 flex items-center justify-between flex-shrink-0 z-30">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsMobileMenuOpen(true)}
+                className="md:hidden p-2 text-muted hover:bg-card rounded-xl transition-all"
+              >
+                <Menu size={24} />
+              </button>
+              <h2 className="text-sm md:text-lg font-bold text-foreground truncate">
+                {sidebarItems.find(i => i.id === activeTab)?.label}
+              </h2>
+              <div className="h-4 w-[1px] bg-border hidden lg:block" />
             </div>
 
-            <a href="https://github.com" target="_blank" className="bg-card p-2 md:p-2.5 rounded-full text-muted hover:text-accent hover:opacity-80 transition-all border border-border shrink-0">
-              <Github size={20} />
-            </a>
-          </div>
-        </header>
+            <div className="flex items-center gap-2 md:gap-4">
+              <LanguageSelector />
+              <ThemeSwitcher />
 
-        <section className="flex-1 overflow-y-auto p-4 md:p-10 lg:p-14 scroll-smooth bg-background">
-          <div className="max-w-[1600px] w-full mx-auto flex flex-col gap-6 px-4">
-            {activeTab === 'individual' && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-              >
-                <SentimentForm
-                  text={indivText}
-                  setText={setIndivText}
-                  result={indivResult}
-                  setResult={setIndivResult}
-                  error={indivError}
-                  setError={setIndivError}
-                />
-              </motion.div>
-            )}
+              <div className="hidden lg:flex items-center gap-2 bg-accent/5 px-4 py-2 rounded-full border border-accent/20">
+                <span className="w-2 h-2 bg-green-500 rounded-full shadow-sm" />
+                <span className="text-[10px] font-bold text-accent uppercase tracking-widest">{t.header.model_label}: v3.0.1</span>
+              </div>
 
-            {activeTab === 'batch' && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5 }}
-                className="h-full"
-              >
-                <BatchUpload
-                  onProcessingComplete={() => setRefreshHistory(p => p + 1)}
-                  file={batchFile}
-                  setFile={setBatchFile}
-                  summary={batchSummary}
-                  setSummary={setBatchSummary}
-                  sessionItems={batchSessionItems}
-                  setSessionItems={setBatchSessionItems}
-                  progress={batchProgress}
-                  setProgress={setBatchProgress}
-                />
-              </motion.div>
-            )}
+              <a href="https://github.com/codigobenja/SAPI" target="_blank" className="bg-card p-2 md:p-2.5 rounded-full text-muted hover:text-accent hover:opacity-80 transition-all border border-border shrink-0">
+                <Github size={20} />
+              </a>
+            </div>
+          </header>
 
-            {activeTab === 'metrics' && (
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-                className="w-full mb-10"
-              >
-                <HistoryTable refreshTrigger={refreshHistory} mode="full" />
-              </motion.div>
-            )}
-          </div>
-        </section>
-      </div>
-    </main>
+          <section className="flex-1 overflow-y-auto p-4 md:p-10 lg:p-14 scroll-smooth bg-background">
+            <div className="max-w-[1600px] w-full mx-auto flex flex-col gap-6 px-4">
+              {activeTab === 'individual' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <SentimentForm
+                    text={indivText}
+                    setText={setIndivText}
+                    result={indivResult}
+                    setResult={setIndivResult}
+                    error={indivError}
+                    setError={setIndivError}
+                  />
+                </motion.div>
+              )}
+
+              {activeTab === 'batch' && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="h-full"
+                >
+                  <BatchUpload
+                    onProcessingComplete={() => setRefreshHistory(p => p + 1)}
+                    file={batchFile}
+                    setFile={setBatchFile}
+                    summary={batchSummary}
+                    setSummary={setBatchSummary}
+                    sessionItems={batchSessionItems}
+                    setSessionItems={setBatchSessionItems}
+                    progress={batchProgress}
+                    setProgress={setBatchProgress}
+                  />
+                </motion.div>
+              )}
+
+              {activeTab === 'metrics' && (
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="w-full mb-10"
+                >
+                  <HistoryTable refreshTrigger={refreshHistory} mode="full" />
+                </motion.div>
+              )}
+            </div>
+          </section>
+        </div>
+      </main>
+    </>
   );
 }
