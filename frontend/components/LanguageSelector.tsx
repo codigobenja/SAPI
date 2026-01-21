@@ -14,7 +14,7 @@ type LanguageOption = {
 
 const languages: LanguageOption[] = [
     { code: 'es', name: 'Español', flag: '🇪🇸' },
-    { code: 'pt', name: 'Português', flag: '🇵🇹' },
+    { code: 'pt', name: 'Português', flag: '🇧🇷' },
 ];
 
 export default function LanguageSelector() {
